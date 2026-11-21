@@ -72,6 +72,10 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .pulse{height:110px;position:relative}.pulse svg{width:100%;height:100%}
 .edge{display:flex;align-items:flex-end;gap:2px;height:74px;margin-top:6px}
 .edge div{flex:1;border-radius:2px 2px 0 0;background:#6090d0}.edge div.neg{background:#b07060}
+.world{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.world .wl{font-size:.8rem;color:var(--mut);font-weight:600}
+.world .w{border:1px solid var(--line);background:var(--card);color:var(--ink);border-radius:999px;padding:7px 14px;font-size:.82rem;font-weight:600;cursor:pointer}
+.world .w.on{background:var(--blue);color:#fff;border-color:var(--blue)}
 @media(max-width:860px){.grid{grid-template-columns:1fr}}
 @media(max-width:860px){.avis{grid-template-columns:1fr}}
 </style></head><body>
@@ -88,6 +92,13 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 </div></div>
 
 <div class="pan wrap">
+<div class="world" id="world">
+  <span class="wl">Mundo:</span>
+  <button class="w on" data-w="all">🌐 Todo</button>
+  <button class="w" data-w="crypto">₿ Cripto</button>
+  <button class="w" data-w="mat">🥇 Materias</button>
+  <button class="w" data-w="ia">🤖 Acciones IA</button>
+</div>
 <div class="live" id="live"></div>
 
 <!-- Portafolio -->
@@ -167,7 +178,8 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <div class="grid">
     <div class="card"><h2>Mirofish · escenarios de futuro</h2>
       <button class="btn btn-g" onclick="mirofish()">🧠 Generar escenarios (100 €)</button>
-      <div class="spinner" id="spM"></div><div id="outM"></div></div>
+      <div class="spinner" id="spM"></div><div id="outM"></div>
+      <div id="mf3d" style="height:190px;margin-top:8px;border-radius:12px;border:1px solid var(--line);overflow:hidden"></div></div>
     <div class="card"><h2>Barrido · cadena de suministro de IA</h2>
       <button class="btn btn-p" onclick="iasweep()">📡 Barrer chips + materiales</button>
       <div class="spinner" id="spI"></div><div id="outI"></div></div>
@@ -179,6 +191,11 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
     <div class="card"><h2>Rotación a cierre (¿merece la pena?)</h2>
       <button class="btn btn-p" onclick="rollt()">🔁 Simular rotación diaria</button>
       <div class="spinner" id="spR"></div><div id="outR"></div></div>
+    <div class="card"><h2>🌐 Dónde converge el dinero (radar 24h)</h2>
+      <button class="btn btn-p" onclick="radar()">📡 Ver ganadores + volumen</button>
+      <div class="spinner" id="spRad"></div><div id="outRad"></div>
+      <div class="sub" style="margin-top:10px"><b>Traders influyentes (copiar perfil):</b></div>
+      <div id="inf" style="margin-top:6px"></div></div>
   </div>
 </section>
 
@@ -275,7 +292,7 @@ async function mirofish(){$("spM").classList.add("show");$("outM").innerHTML="";
   if(c.scenarios_7d)s+=`<table><thead><tr><th>Escenario</th><th class="num">Prob</th><th class="num">Ruta 7d</th><th class="num">100 €</th></tr></thead><tbody>`+c.scenarios_7d.map(x=>`<tr><td>${x.nombre}</td><td class="num">${(x.prob*100).toFixed(0)}%</td><td class="num ${x.ruta>=0?'up':'down'}">${(x.ruta*100).toFixed(1)}%</td><td class="num">${x["100e"]} €</td></tr>`).join("")+`</tbody></table>`;
   s+=`<table style="margin-top:10px"><thead><tr><th>Activo</th><th>Mercado</th><th class="num">Prob↑</th><th class="num">Score</th></tr></thead><tbody>`;
   Object.entries(r.groups||{}).forEach(([g,arr])=>arr.slice(0,2).forEach(a=>s+=`<tr><td>${a.asset}</td><td>${g}</td><td class="num">${(a.prob_up*100).toFixed(0)}%</td><td class="num">${a.score}</td></tr>`));
-  s+=`</tbody></table>`;$("outM").innerHTML=s;}
+  s+=`</tbody></table>`;$("outM").innerHTML=s;drawMirofish3D(c);}
 async function iasweep(){$("spI").classList.add("show");$("outI").innerHTML="";
   let r;try{r=await (await fetch("api/ia")).json();}catch(e){r={error:String(e)};}
   $("spI").classList.remove("show");
@@ -378,6 +395,66 @@ function buildConstellation(){
     renderer.render(scene,camera);})();
 }
 
-strat();live();initAlphaVisuals();
+// ---------- F2: selector de mundo ----------
+const WORLDS={
+ all:{s:["BTC","ETH","NVDA","SPY","AAPL","GC=F","CL=F","EURUSD=X"],v:["BTC","ETH","NVDA","SPY","GC=F","CL=F","SI=F"]},
+ crypto:{s:["BTC","ETH"],v:["BTC","ETH"]},
+ mat:{s:["GC=F","CL=F"],v:["GC=F","CL=F","SI=F"]},
+ ia:{s:["NVDA","SPY","AAPL","AMD","TSM","ASML","AVGO","MU"],v:["NVDA","SPY","MU"]}};
+function setWorld(w){document.querySelectorAll("#world .w").forEach(b=>b.classList.toggle("on",b.dataset.w===w));
+ const sel=WORLDS[w]||WORLDS.all;
+ ["sAsset","vAsset"].forEach((id,ix)=>{
+   const el=document.getElementById(id),cur=el.value,opts=ix?sel.v:sel.s;
+   el.innerHTML=opts.map(o=>`<option>${o}</option>`).join("");
+   el.value=opts.includes(cur)?cur:opts[0];});}
+document.querySelectorAll("#world .w").forEach(b=>b.onclick=()=>setWorld(b.dataset.w));
+
+// ---------- F3: radar de convergencia + influencers ----------
+const INFLU=[["Miles Deutscher","momentum crypto (agresivo)","BTC","momentum_regime"],
+ ["Universo Crypto","diversificar cripto+IA (equilibrado)","NVDA","ma_cross"],
+ ["Yield Warden","defensivo / cobertura","GC=F","buyandhold"],
+ ["VIKTOR D.","rotación semanal de momentum","ETH","momentum_vol"]];
+function renderInf(){const box=document.getElementById("inf");box.innerHTML=INFLU.map(i=>
+  `<div style="display:flex;align-items:center;gap:8px;margin-bottom:7px;font-size:.78rem">
+   <span style="font-weight:700">${i[0]}</span><span style="color:var(--mut)">· ${i[1]}</span>
+   <button class="btn btn-g" style="padding:5px 10px;font-size:.72rem" onclick="copyProfile('${i[2]}','${i[3]}')">Copiar perfil</button></div>`).join("");
+ document.getElementById("inf").dataset.init="1";}
+function copyProfile(asset,stg){setWorld(asset==="GC=F"||asset==="CL=F"||asset==="SI=F"?"mat":(["BTC","ETH"].includes(asset)?"crypto":"ia"));
+ document.querySelectorAll(".nav button")[1].click();
+ document.getElementById("sStrat").value=stg;strat();
+ const el=document.getElementById("sAsset");el.value=asset;
+ document.getElementById("sCap").value="100";
+ simul();}
+async function radar(){$("spRad").classList.add("show");$("outRad").innerHTML="";
+ let r;try{r=await (await fetch("api/radar")).json();}catch(e){r={error:String(e)};}
+ $("spRad").classList.remove("show");
+ if(r.error){$("outRad").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+ const t=k=>r[k].slice(0,7).map(x=>`<tr><td><b>${x.sym}</b></td><td class="num ${x.chg>=0?'up':'down'}">${x.chg>=0?'+':''}${x.chg}%</td><td class="num">${x.qvol}M</td></tr>`).join("");
+ $("outRad").innerHTML=`<div class="sub" style="margin:6px 0">donde se mueve el dinero ahora (Binance, 24h)</div>
+  <table><thead><tr><th>Ganadores</th><th class="num">24h</th><th class="num">Vol</th><th>·</th><th>Mayor volumen</th><th class="num">24h</th></tr></thead><tbody>
+  <tr><td colspan="3">${t("gainers")}</td><td></td><td colspan="2">${t("most_active")}</td></tr></tbody></table>`;
+ renderInf();}
+
+// ---------- F2: Mirofish en 3D ----------
+function drawMirofish3D(c){
+ const box=document.getElementById("mf3d");
+ if(!box||!window.THREE||!c||!c.target){box.innerHTML="";return;}
+ const W=(box.clientWidth||420),H=190;
+ const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,W/H,0.1,100);cam.position.set(0,1.6,4.4);cam.lookAt(0,-0.4,0);
+ const ren=new THREE.WebGLRenderer({alpha:true,antialias:true});ren.setSize(W,H);ren.setPixelRatio(Math.min(window.devicePixelRatio,2));box.innerHTML="";box.appendChild(ren.domElement);
+ scene.add(new THREE.AmbientLight(0xffffff,.8));scene.add(new THREE.PointLight(0xffffff,1,10));
+ const core=new THREE.Mesh(new THREE.SphereGeometry(.06,16,16),new THREE.MeshBasicMaterial({color:0x0a66ff}));core.position.set(0,-0.7,0);scene.add(core);
+ const mk=(pts,color)=>{const cs=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(p[0],p[1],p[2])));return new THREE.Line(new THREE.BufferGeometry().setFromPoints(cs.getPoints(24)),new THREE.MeshBasicMaterial({color,linewidth:1}));};
+ const cL=[0,-0.7,0];
+ const S=1/(c.target||1);
+ const up=[cL,[0.7,-0.1,0.4],[1.4,0.6,0.8],[2.1,1.4,1.2]];
+ const base=[cL,[0.6,-0.15,0],[1.2,0.2,0.2],[1.8,0.6,0.4]];
+ const dn=[cL,[-0.6,-0.1,0.2],[-1.2,-0.4,-0.2],[-1.8,-0.9,-0.5]];
+ [["#30d158",up],["#0a84ff",base],["#ff453a",dn]].forEach(([col,pts])=>scene.add(mk(pts,col)));
+ let t=0;(function l(){requestAnimationFrame(l);t+=.01;core.rotation.y+=.02;
+  scene.rotation.y=Math.sin(t*.6)*(0.35);ren.render(scene,cam);})();
+}
+
+strat();live();initAlphaVisuals();renderInf();
 </script>
 </body></html>
