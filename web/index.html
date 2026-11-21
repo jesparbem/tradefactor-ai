@@ -1,298 +1,267 @@
 <!DOCTYPE html>
-<html lang="es">
-<head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Simulador de Inversiones · 100 €</title>
+<html lang="es" data-theme="light">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FactorIA Terminal · Simulador</title>
 <style>
-  :root{--bg:#0b0f17;--panel:#121a2b;--line:#223047;--txt:#e6ebf4;--mut:#8f9bb0;
-        --acc:#22d3ee;--green:#34d399;--red:#f87171;--amber:#fbbf24;--violet:#7c5cff}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{background:radial-gradient(1100px 550px at 85% -10%, #14203f 0%, transparent 55%),var(--bg);color:var(--txt);
-    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,sans-serif;padding:22px;min-height:100vh}
-  .wrap{max-width:1060px;margin:0 auto}
-  h1{font-size:1.45rem;margin-bottom:4px}
-  h1 span{background:linear-gradient(90deg,var(--acc),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
-  .sub{color:var(--mut);font-size:.88rem;margin-bottom:18px}
-  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
-  .card h2{font-size:1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
-  .card h2 .tag{font-size:.65rem;background:rgba(124,92,255,.2);color:var(--violet);border:1px solid rgba(124,92,255,.4);padding:2px 8px;border-radius:999px}
-  .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end}
-  .field{display:flex;flex-direction:column;gap:4px;font-size:.75rem;color:var(--mut)}
-  .field label{text-transform:uppercase;letter-spacing:.04em}
-  input,select{background:#0d1524;border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:8px 10px;font-size:.9rem}
-  input:focus,select:focus{outline:none;border-color:var(--acc)}
-  .btn{border:none;border-radius:10px;padding:10px 16px;font-weight:600;font-size:.9rem;cursor:pointer}
-  .btn-p{background:linear-gradient(135deg,var(--acc),#0891b2);color:#04142a}
-  .btn-g{background:linear-gradient(135deg,var(--violet),#4f46e5);color:#fff}
-  .btn:hover{filter:brightness(1.12)}
-  .param-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
-  .note{font-size:.76rem;color:var(--mut);line-height:1.5}
-  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
-  .metric{background:#0d1524;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
-  .metric .k{font-size:.66rem;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
-  .metric .v{font-size:1.15rem;font-weight:700;font-variant-numeric:tabular-nums}
-  .up{color:var(--green)}.down{color:var(--red)}
-  table{width:100%;border-collapse:collapse;margin-top:8px}
-  th,td{padding:8px 9px;text-align:left;border-bottom:1px solid var(--line);font-size:.8rem}
-  th{color:var(--mut);text-transform:uppercase;font-size:.66rem;letter-spacing:.04em}
-  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
-  .best{background:rgba(52,211,153,.12)}
-  .svgbox{width:100%;height:220px}
-  .spinner{display:none;text-align:center;padding:18px;color:var(--mut)}
-  .spinner.show{display:block}
-  .live{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
-  .live .chip{background:var(--panel);border:1px solid var(--line);padding:8px 12px;border-radius:999px;font-size:.8rem}
-  .live b{color:var(--acc)}
-  .footer{color:var(--mut);font-size:.74rem;margin-top:18px;line-height:1.6;border-top:1px solid var(--line);padding-top:12px}
-  .banner{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);border-radius:10px;padding:10px 12px;font-size:.8rem;margin-bottom:14px;line-height:1.5}
-  @media(max-width:760px){.grid{grid-template-columns:1fr}}
-</style>
-</head>
-<body>
-<div class="wrap">
-  <h1><span>Simulador de Inversiones</span> · empiezas con 100 €</h1>
-  <div class="sub">Datos reales de Binance (BTC/ETH, diario 2019→hoy), costes reales (0,15% por operación), y optimización <b>genética</b> con disciplina fuera de muestra para que no te engañe el sobreajuste.</div>
+:root[data-theme="light"]{--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--mut:#86868b;--line:#e2e2e6;--hair:#f0f0f2;--blue:#0071e3;--up:#2ea043;--down:#e0442e;--amber:#ff9f0a;--violet:#bf5af2;--navon:#e8edf7;--soft:#fafafc;--grid:#e3e9f2;--chip:#ebf5ff;--rise:#e6f9ee;--fall:#ffe9e7;--info:#eef6ff;--infobd:#cfe3ff;--infoink:#0057a3}
+:root[data-theme="dark"]{--bg:#000;--card:#1c1c1e;--ink:#f5f5f7;--mut:#98989e;--line:#2c2c2e;--hair:#232327;--blue:#0a84ff;--up:#30d158;--down:#ff453a;--amber:#ff9f0a;--violet:#bf5af2;--navon:#1f2a3d;--soft:#26262a;--grid:#2c3450;--chip:#12233a;--rise:#12301d;--fall:#38120e;--info:#0d1d30;--infobd:#1b3a5f;--infoink:#6eb0ff}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--ink);transition:.25s}
+.wrap{max-width:1120px;margin:0 auto}
+.top{position:sticky;top:0;background:color-mix(in srgb,var(--card) 80%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);z-index:50}
+.top .wrap{display:flex;align-items:center;gap:16px;padding:12px 0;flex-wrap:wrap}
+.brand{font-weight:700;font-size:1.12rem}.brand span{color:var(--blue)}
+.nav{display:flex;gap:3px;flex-wrap:wrap}
+.nav button{background:none;border:none;color:var(--mut);font-size:.9rem;padding:7px 14px;border-radius:999px;cursor:pointer;font-family:inherit}
+.nav button.on{background:var(--navon);color:var(--blue);font-weight:600}
+.spacer{flex:1}
+.theme{display:flex;gap:3px;background:var(--hair);border:1px solid var(--line);border-radius:999px;padding:3px}
+.theme button{border:none;background:none;width:34px;height:30px;border-radius:999px;cursor:pointer;font-size:1rem}
+.theme button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.pan{padding:24px 0 34px}
+.screen{display:none}.screen.on{display:block}
+.path{color:var(--mut);font-size:.82rem;margin-bottom:6px}
+h1{font-size:1.5rem;letter-spacing:-.02em;margin-bottom:6px}
+.sub{color:var(--mut);font-size:.88rem;margin-bottom:16px;line-height:1.5}
+.live{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.live .chip{background:var(--card);border:1px solid var(--line);padding:7px 12px;border-radius:999px;font-size:.78rem}
+.live b{color:var(--blue)}
+.banner{background:var(--info);border:1px solid var(--infobd);color:var(--infoink);border-radius:12px;padding:10px 14px;font-size:.82rem;margin-bottom:16px;line-height:1.5}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 3px 14px rgba(0,0,0,.07)}
+.card.wide{grid-column:1/-1}
+.card h2{font-size:.78rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px;font-weight:700}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:flex-end}
+.fld{display:flex;flex-direction:column;gap:3px;font-size:.72rem;color:var(--mut);font-weight:600}
+.fld input,.fld select{background:var(--soft);border:1px solid var(--line);color:var(--ink);border-radius:9px;padding:8px 10px;font-size:.85rem}
+.fld input:focus,.fld select:focus{outline:none;border-color:var(--blue)}
+.btn{border:none;border-radius:11px;padding:10px 16px;font-weight:600;font-size:.88rem;cursor:pointer;font-family:inherit}
+.btn-p{background:linear-gradient(135deg,var(--blue),#0058c9);color:#fff}
+.btn-g{background:linear-gradient(135deg,var(--violet),#4f46e5);color:#fff}
+.btn:hover{filter:brightness(1.1)}
+.metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-top:12px}
+.metric{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.metric .k{font-size:.62rem;color:var(--mut);text-transform:uppercase;letter-spacing:.03em}
+.metric .v{font-size:1.08rem;font-weight:700;font-variant-numeric:tabular-nums}
+table{width:100%;border-collapse:collapse;margin-top:8px}
+th,td{padding:8px 9px;text-align:left;border-bottom:1px solid var(--line);font-size:.8rem}
+th{color:var(--mut);text-transform:uppercase;font-size:.66rem;letter-spacing:.04em}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.best{background:var(--rise)}
+.svgbox{width:100%;height:230px}
+.spinner{display:none;text-align:center;padding:14px;color:var(--mut);font-size:.85rem}
+.spinner.show{display:block}
+.up{color:var(--up)}.down{color:var(--down)}
+.agst{display:flex;gap:7px;flex-wrap:wrap;font-size:.72rem}
+.agst .ag{border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--soft);color:var(--mut)}
+.agst .ag b{color:var(--ink)}
+.agst .yes{background:var(--rise);color:var(--up);border-color:transparent}
+.agst .no{background:var(--fall);color:var(--down);border-color:transparent}
+.foot{color:var(--mut);font-size:.74rem;text-align:center;margin:16px 0 8px;line-height:1.6;border-top:1px solid var(--line);padding-top:12px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="top"><div class="wrap">
+  <div class="brand">Factor<span>IA</span> Terminal</div>
+  <nav class="nav">
+    <button class="on" data-t="p">Portafolio</button>
+    <button data-t="s">Simulaciones</button>
+    <button data-t="a">Alpha</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="theme"><button id="tL" title="Claro">☀️</button><button id="tD" title="Oscuro">🌙</button></div>
+  <div style="width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#34c1ff);color:#fff;display:grid;place-items:center;font-weight:600">W</div>
+</div></div>
 
-  <div class="live" id="live">
-    <span class="chip">Cargando datos…</span>
+<div class="pan wrap">
+<div class="live" id="live"></div>
+
+<!-- Portafolio -->
+<section class="screen on" id="p">
+  <div class="path">Portafolio · resumen</div>
+  <h1>El dinero del proyecto en un vistazo</h1>
+  <div class="sub">Cripto en tiempo real (Binance) · bolsa/materias/divisas con retraso ≈15 min · cartera multi-activo con costes reales y rebalanceo mensual.</div>
+  <div class="card wide">
+    <h2>Cartera multi-activo · 7 mercados · rebasada a 100 € (fuera de muestra)</h2>
+    <button class="btn btn-p" onclick="portfolio()">▶ Simular cartera (100 €)</button>
+    <div class="spinner" id="spP">Calculando cartera…</div>
+    <div class="svgbox" id="svgP"></div>
+    <div id="outP"></div>
   </div>
+</section>
 
-  <div class="banner" id="honest">
-    ⚠️ <b>Regla de oro:</b> los resultados que se ven en el <b>fuera de muestra</b> (2024→hoy) son los que importan. Los del entrenamiento (2019-2023) están <i>elegidos</i> por el algoritmo genético: casi siempre se ven mejor de lo que luego hacen. Nunca decidas con los números de entrenamiento.
-  </div>
-
+<!-- Simulaciones -->
+<section class="screen" id="s">
+  <div class="path">Simulaciones · escenarios</div>
+  <h1>Con 100 €, qué dice la historia</h1>
+  <div class="sub">Backtest honesto con costes y split fuera de muestra (la columna <b>Test</b> es la que manda — la Train está elegida por el algoritmo y engaña).</div>
   <div class="grid">
-    <!-- Col 1: escenario -->
     <div class="card">
-      <h2>🎯 Simular un escenario <span class="tag">modo manual</span></h2>
-      <div>
-        <div class="row">
-          <div class="field"><label>Activo</label>
-            <select id="asset"><option>BTC</option><option>ETH</option></select></div>
-          <div class="field"><label>Capital inicial (€)</label>
-            <input id="cap" type="number" value="100" min="1" step="10" /></div>
-          <div class="field"><label>Periodo</label>
-            <select id="split">
-              <option value="test">Fuera de muestra (2024→hoy)</option>
-              <option value="train">Entrenamiento (2019-2023)</option>
-              <option value="full">Todo el histórico</option>
-            </select></div>
-        </div>
-        <div class="field"><label>Estrategia</label>
-          <select id="strat" onchange="stratChanged()">
-            <option value="momentum_regime">Momentum + filtro de régimen</option>
-            <option value="ma_cross">Cruce de medias móviles</option>
-            <option value="momentum_vol">Momentum + objetivo de volatilidad</option>
-            <option value="buyandhold">Comprar y mantener (benchmark)</option>
-          </select></div>
-        <div class="param-grid" id="params"></div>
-        <div style="margin-top:12px"><button class="btn btn-p" onclick="simulate()">▶ Simular escenario</button></div>
-      </div>
-      <div class="spinner" id="simSpinner">Calculando…</div>
-      <div id="simOut"></div>
-    </div>
-
-    <!-- Col 2: genetico -->
-    <div class="card">
-      <h2>🧬 Optimización genética <span class="tag">muchos escenarios a la vez</span></h2>
+      <h2>Simular un escenario</h2>
       <div class="row">
-        <div class="field"><label>Generaciones</label><input id="gens" type="number" value="12" min="3" max="40" /></div>
-        <div class="field"><label>Población</label><input id="pops" type="number" value="30" min="10" max="80" /></div>
+        <div class="fld"><label>Activo</label><select id="sAsset"><option>BTC</option><option>ETH</option><option>NVDA</option><option>SPY</option><option>AAPL</option><option>GC=F</option><option>CL=F</option><option>EURUSD=X</option></select></div>
+        <div class="fld"><label>Capital (€)</label><input id="sCap" type="number" value="100"></div>
+        <div class="fld"><label>Periodo</label><select id="sSplit"><option value="test">Fuera de muestra (2024→)</option><option value="train">Entrenamiento</option><option value="full">Todo</option></select></div>
+        <div class="fld"><label>Estrategia</label><select id="sStrat" onchange="strat()"><option value="momentum_regime">Momentum + régimen</option><option value="ma_cross">Cruce de medias</option><option value="momentum_vol">Mom + vol</option><option value="buyandhold">Comprar & mantener</option></select></div>
       </div>
-      <div class="note">Evoluciona estrategias y parámetros sobre entrenamiento, y luego mide <b>sin tocar</b> los mejores en fuera de muestra. Te aviso: buscar con genética (y datos diarios) en ~2 años de datos casi siempre <b>sobreajusta</b> — por eso te enseño el fuera de muestra en grande.</div>
-      <div style="margin-top:12px"><button class="btn btn-g" onclick="ga()">🧬 Optimizar y aconsejar</button></div>
-      <div class="spinner" id="gaSpinner">Evolucionando poblaciones… (varias generaciones)</div>
-      <div id="gaOut"></div>
+      <div id="sParams"></div>
+      <div style="margin-top:10px"><button class="btn btn-p" onclick="simul()">▶ Ejecutar</button></div>
+      <div class="spinner" id="spSim"></div>
+      <div class="svgbox" id="svgSim"></div>
+      <div id="outSim"></div>
+    </div>
+    <div class="card">
+      <h2>Optimización genética</h2>
+      <div class="row">
+        <div class="fld"><label>Generaciones</label><input id="gGens" type="number" value="12"></div>
+        <div class="fld"><label>Población</label><input id="gPop" type="number" value="30"></div>
+      </div>
+      <div style="margin-top:10px"><button class="btn btn-g" onclick="genetic()">🧬 Optimizar y comparar</button></div>
+      <div class="spinner" id="spG"></div>
+      <div class="svgbox" id="svgG"></div>
+      <div id="outG"></div>
     </div>
   </div>
+</section>
 
-  <div class="card" style="margin-top:16px">
-    <h2>🌐 Cartera multi-activo <span class="tag">7 mercados a la vez</span></h2>
-    <div class="note">Simula un portafolio de <b>BTC, ETH, NVDA, SPY, AAPL, Oro y EUR/USD</b> con rebalanceo mensual y costes reales por mercado. Compara 3 perfiles frente al benchmark en el tramo que importa (2024→hoy, rebasado a 100 €).</div>
-    <div style="margin-top:12px"><button class="btn btn-p" onclick="portfolio()">▶ Simular cartera multi-activo</button></div>
-    <div class="spinner" id="poSpinner">Calculando cartera…</div>
-    <div class="svgbox" id="svgOutC"></div>
-    <div id="poOut"></div>
+<!-- Alpha -->
+<section class="screen" id="a">
+  <div class="path">Alpha · escenarios de futuro + barrido</div>
+  <h1>La red piensa el camino del dinero</h1>
+  <div class="sub">Mirofish elige el escenario de mayor probabilidad · el barrido IA detecta oportunidades en la cadena de suministro · el veredicto reúne a los 8 agentes.</div>
+  <div class="grid">
+    <div class="card"><h2>Mirofish · escenarios de futuro</h2>
+      <button class="btn btn-g" onclick="mirofish()">🧠 Generar escenarios (100 €)</button>
+      <div class="spinner" id="spM"></div><div id="outM"></div></div>
+    <div class="card"><h2>Barrido · cadena de suministro de IA</h2>
+      <button class="btn btn-p" onclick="iasweep()">📡 Barrer chips + materiales</button>
+      <div class="spinner" id="spI"></div><div id="outI"></div></div>
+    <div class="card"><h2>Veredicto de los 8 agentes</h2>
+      <div class="row">
+        <div class="fld"><label>Activo</label><select id="vAsset"><option>BTC</option><option>ETH</option><option>NVDA</option><option>SPY</option><option>GC=F</option><option>CL=F</option><option>SI=F</option></select></div>
+        <button class="btn btn-g" onclick="verdict()">⚖️ Consultar</button></div>
+      <div class="spinner" id="spV"></div><div id="outV"></div></div>
+    <div class="card"><h2>Rotación a cierre (¿merece la pena?)</h2>
+      <button class="btn btn-p" onclick="rollt()">🔁 Simular rotación diaria</button>
+      <div class="spinner" id="spR"></div><div id="outR"></div></div>
   </div>
+</section>
 
-  <div class="footer">
-    Métricas: múltiplo sobre 100 € · CAGR anual · Sharpe (rentabilidad ajustada a riesgo) · máximo drawdown · tiempo en mercado.
-    <br/>Los datos se actualizan desde Binance (cierre diario). Los parámetros ganadores aquí son <b>posibles sobreajustes</b>: ningún escenario presente garantiza rentabilidad futura, y el objetivo de "x10 en una semana" no ha ocurrido ni una vez en BTC/ETH desde 2019.
-  </div>
+<div class="foot">FactorIA Terminal · motor real con datos 2019→hoy y costes por mercado · Acceso admin/Admin1973. · No es asesoramiento financiero: los resultados fuera de muestra son los que valen, y el "x10 en una semana" no ha ocurrido nunca en BTC/ETH.</div>
 </div>
 
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
-const DEFAULTS={momentum_regime:{mom_n:30,ma_n:200},ma_cross:{fast:20,slow:50},
-                 momentum_vol:{mom_n:21,vol_n:21,target_vol:0.015}};
-const EUR=n=>(n<0?"−":"")+(n<1?n.toFixed(3)+" €":n.toFixed(1)+" €");
+const rnd=(a,b)=>a+Math.random()*(b-a);
+const fmt=n=>n>=1e6?(n/1e6).toFixed(2)+"M":n>=1e3?(n/1e3).toFixed(1)+"k":String(n);
 const xfmt=n=>"x"+n.toFixed(2);
 const pct=n=>(n*100).toFixed(1)+"%";
+const DEFAULTS={momentum_regime:{mom_n:30,ma_n:200},ma_cross:{fast:20,slow:50},momentum_vol:{mom_n:21,vol_n:21,target_vol:0.015}};
+async function post(p,b){try{const r=await fetch(p,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(b||{})});return await r.json();}catch(e){return {error:String(e)};}}
 
-function stratChanged(){
-  const s=$("strat").value, box=$("params");
-  box.innerHTML="";
-  const d=DEFAULTS[s];
-  if(!d)return;
-  for(const[k,v]of Object.entries(d)){
-    const f=document.createElement("div");f.className="field";
-    const step=k==="target_vol"?0.001:1;
-    const stepAttr=k==="target_vol"?'step="0.001"':"";
-    f.innerHTML=`<label>${k}</label><input id="p_${k}" type="number" value="${v}" step="${step}">`;
-    box.appendChild(f);
-  }
-}
-function readParams(){
-  const s=$("strat").value, d=DEFAULTS[s];
-  if(!d)return{};
-  const o={};
-  for(const k of Object.keys(d))o[k]=parseFloat($("p_"+k).value);
-  return o;
-}
-async function post(path,body){
-  const r=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
-  return r.json();
-}
+// tabs + tema
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("on"));b.classList.add("on");
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));$(""+b.dataset.t).classList.add("on");
+}));
+const setTheme=t=>{document.documentElement.dataset.theme=t;["tL","tD"].forEach(id=>$(id).classList.toggle("on",(!(t==="dark")===(id==="tL"))));try{localStorage.setItem("tf-theme",t);}catch(e){}};
+$("tL").onclick=()=>setTheme("light");$("tD").onclick=()=>setTheme("dark");
+try{setTheme(localStorage.getItem("tf-theme")||"light");}catch(e){setTheme("light");}
 
-// ---------- grafico SVG ----------
-function drawSVG(id, curves, xlabel){
-  const W=1040,H=250,padL=52,padR=12,padT=14,padB=26;
-  const iw=W-padL-padR, ih=H-padT-padB;
-  let tmin=0,tmax=0,vmin=Infinity,vmax=-Infinity;
-  curves.forEach(c=>{c.p.forEach((p,i)=>{if(!i)return; if(i>tmax)tmax=i; vmin=Math.min(vmin,p.eq);vmax=Math.max(vmax,p.eq);});});
-  if(vmin===vmax){vmin-=1;vmax+=1;} const vpad=(vmax-vmin)*0.08; vmin-=vpad;vmax+=vpad;
-  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%;display:block" role="img">`;
-  s+=gridLines();
-  const colors={BTC:"#22d3ee",ETH:"#7c5cff",train:"#8f9bb0",test:"#34d399",gen:"#fbbf24",def:"#ff9f0a",agg:"#0071e3"};
-  const labels=["100 €","200 €","400 €","800 €","1.6k","3.2k","6.4k","12.8k","25.6k"][0]; 
-  // ejes
-  s+=`<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H-padB}" stroke="#2a3a55"/>`;
-  s+=`<line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" stroke="#2a3a55"/>`;
-  curves.forEach((c,ci)=>{
-    const col=colors[c.c]||"#0071e3";
-    let d="";
-    c.p.forEach((p,i)=>{ if(!i)return; const x=padL+iw*(i/tmax), y=padT+ih*(1-(p.eq-vmin)/(vmax-vmin));
-      d+=(d?"L":"M")+x.toFixed(1)+","+y.toFixed(1); });
-    s+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2" opacity="${ci?"0.85":"1"}"/>`;
-    // etiqueta final
-    const lp=c.p[c.p.length-1], xs=padL+iw, ys=padT+ih*(1-(lp.eq-vmin)/(vmax-vmin));
-    s+=`<text x="${xs-6}" y="${ys-4}" fill="${col}" font-size="11" text-anchor="end">${c.label} ${xfmt(lp.eq)}</text>`;
-  });
-  s+=`<text x="${padL}" y="${H-padB+15}" fill="#5b6b84" font-size="10">${xlabel||"2019 ─────────────────── 2023 (split) ─────────────────── hoy"}</text>`;
-  s+=`</svg>`;
-  $("svgOut"+(id||"")).innerHTML=s;
+// grafico
+function drawSVG(id,curves,xlabel){
+  const W=1040,H=250,pl=52,pr=12,pt=14,pb=26,iw=W-pl-pr,ih=H-pt-pb;
+  let tmax=0,vmin=Infinity,vmax=-Infinity;
+  curves.forEach(c=>c.p.forEach((p,i)=>{if(!i)return;if(i>tmax)tmax=i;vmin=Math.min(vmin,p.eq);vmax=Math.max(vmax,p.eq);}));
+  if(vmin===vmax){vmin-=1;vmax+=1;}const vp=(vmax-vmin)*0.08;vmin-=vp;vmax+=vp;
+  const colmap={test:"#0071e3",agg:"#7c5cff",def:"#ff9f0a",bench:"#2ea043",gen:"#ff9f0a"};
+  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%;display:block">`;
+  s+=`<line x1="${pl}" y1="${pt}" x2="${pl}" y2="${H-pb}" stroke="var(--grid)"/><line x1="${pl}" y1="${H-pb}" x2="${W-pr}" y2="${H-pb}" stroke="var(--grid)"/>`;
+  curves.forEach(c=>{const cs=colmap[c.c]||"#0071e3";let d="";
+    c.p.forEach((p,i)=>{if(!i)return;const x=pl+iw*(i/tmax),y=pt+ih*(1-(p.eq-vmin)/(vmax-vmin));d+=(d?"L":"M")+x.toFixed(1)+","+y.toFixed(1);});
+    s+=`<path d="${d}" fill="none" stroke="${cs}" stroke-width="2" opacity=".9"/>`;
+    const lp=c.p[c.p.length-1],xx=pl+iw,yy=pt+ih*(1-(lp.eq-vmin)/(vmax-vmin));
+    s+=`<text x="${xx-6}" y="${yy-4}" fill="${cs}" font-size="11" text-anchor="end" font-weight="600">${c.label} ${xfmt(lp.eq)}</text>`;});
+  s+=`<text x="${pl}" y="${H-pb+16}" fill="var(--mut)" font-size="10">${xlabel||"tramo"}</text></svg>`;
+  $("svg"+id).innerHTML=s;
 }
-function gridLines(){return "";}
+function esc(s){const d=document.createElement("div");d.textContent=s;return d.innerHTML;}
+function metricsHTML(m){const c=m.multiple>=1?"up":"down";
+  return `<div class="metrics">
+   <div class="metric"><div class="k">100 € →</div><div class="v ${c}">${m.final} €</div></div>
+   <div class="metric"><div class="k">Múltiplo</div><div class="v ${c}">${xfmt(m.multiple)}</div></div>
+   <div class="metric"><div class="k">CAGR</div><div class="v">${pct(m.cagr)}</div></div>
+   <div class="metric"><div class="k">Sharpe</div><div class="v">${m.sharpe}</div></div>
+   <div class="metric"><div class="k">Max DD</div><div class="v down">${pct(m.maxdd)}</div></div></div>`;}
 
-// ---------- escenario ----------
-async function simulate(){
-  $("simSpinner").classList.add("show");$("simOut").innerHTML="";
-  const b={asset:$("asset").value,capital:parseFloat($("cap").value)||100,split:$("split").value,
-           strategy:$("strat").value,params:readParams()};
-  const r=await post("api/simulate",b);
-  $("simSpinner").classList.remove("show");
-  if(r.error){$("simOut").innerHTML=`<div class="note">❌ ${r.error}</div>`;return;}
-  const m=r.sim;
-  const col=m.final>=m.start_cash?"up":"down";
-  $("simOut").innerHTML=`
-    <div class="svgbox" id="svgOut1"></div>
-    <div class="metrics">
-      <div class="metric"><div class="k">Capital final</div><div class="v ${col}">${EUR(m.final)}</div></div>
-      <div class="metric"><div class="k">Múltiplo</div><div class="v ${col}">${xfmt(m.multiple)}</div></div>
-      <div class="metric"><div class="k">CAGR anual</div><div class="v">${pct(m.cagr)}</div></div>
-      <div class="metric"><div class="k">Sharpe</div><div class="v">${m.sharpe}</div></div>
-      <div class="metric"><div class="k">Max drawdown</div><div class="v down">${pct(m.maxdd)}</div></div>
-      <div class="metric"><div class="k">Tiempo en mercado</div><div class="v">${pct(m.time_in_market)}</div></div>
-    </div>`;
-  const curve=m.curve;
-  const label=`${$("asset").value} · ${($("strat").value==="buyandhold")?"Buy & Hold":r.strategy}`;
-  drawSVG("1",[{label:label,c:r.asset||"test",p:curve}]);
-}
+async function live(){try{const r=await (await fetch("api/live")).json();if(!r||!r.assets)return;
+  let h="";for(const[s,a]of Object.entries(r.assets))h+=`<span class="chip">${s} · cierre <b>${a.last_close.toLocaleString("es-ES",{maximumFractionDigits:2})} $</b> ${a.last_date}</span>`;
+  h+=`<button class="btn btn-p" style="padding:7px 12px;font-size:.75rem" onclick="refresh()">↻ Binance</button>`;$("live").innerHTML=h;}catch(e){}}
+async function refresh(){const r=await post("api/refresh",{});alert(r.ok?"Datos actualizados ✅":"Error: "+r.error);live();}
 
-// ---------- genetico ----------
-async function ga(){
-  $("gaSpinner").classList.add("show");$("gaOut").innerHTML="";
-  const b={asset:$("asset").value,capital:parseFloat($("cap").value)||100,
-           population:parseInt($("pops").value)||30,generations:parseInt($("gens").value)||12};
-  const r=await post("api/genetic",b);
-  $("gaSpinner").classList.remove("show");
-  if(r.error){$("gaOut").innerHTML=`<div class="note">❌ ${r.error}</div>`;return;}
-  // tabla
-  let rows=`<table><thead><tr><th>#</th><th>Estrategia</th><th>Parámetros</th>
-    <th class="num">Train x</th><th class="num">Train Sharpe</th>
-    <th class="num">Test x</th><th class="num">Test Sharpe</th><th class="num">Test DD</th></tr></thead><tbody>`;
-  const top=r.top.slice().sort((a,b)=>b.test.sharpe-a.test.sharpe);
-  top.forEach((t,i)=>{
-    rows+=`<tr class="${i===0?'best':''}"><td>${i+1}</td><td>${t.strategy_name}</td>
-      <td style="color:#8f9bb0">${JSON.stringify(t.params)}</td>
-      <td class="num">${xfmt(t.train.multiple)}</td><td class="num">${t.train.sharpe}</td>
-      <td class="num ${t.test.multiple>=1?'up':'down'}">${xfmt(t.test.multiple)}</td>
-      <td class="num">${t.test.sharpe}</td><td class="num down">${pct(t.test.maxdd)}</td></tr>`;
-  });
-  rows+=`<tr><td>—</td><td><b>Comprar y mantener</b> (benchmark)</td><td>—</td>
-    <td class="num">${xfmt(r.benchmark.train.multiple)}</td><td class="num">${r.benchmark.train.sharpe}</td>
-    <td class="num ${r.benchmark.test.multiple>=1?'up':'down'}">${xfmt(r.benchmark.test.multiple)}</td>
-    <td class="num">${r.benchmark.test.sharpe}</td><td class="num down">${pct(r.benchmark.test.maxdd)}</td></tr>`;
-  rows+=`</tbody></table>`;
-  // consejo
-  const best=top[0], be=r.benchmark.test;
-  const beats=best.test.multiple>be.multiple;
-  let rec=`<div style="margin-top:12px" class="banner">
-    <b>Consejo honesto (fuera de muestra):</b> la mejor detectada por genética es <b>${best.strategy_name}</b> → 
-    ${xfmt(best.test.multiple)} (Sharpe ${best.test.sharpe}, DD ${pct(best.test.maxdd)}) frente a comprar-y-mantener ${xfmt(be.multiple)}.
-    ${beats?'Estrategia <b>supera</b> al benchmark con menos riesgo — es la candidata más razonable, pero SON DATOS DIARIOS Y POCOS AÑOS: trátala como hipótesis, no como certeza.':'En este tramo <b>no supera</b> al benchmark — la genética encontró buena solución dentro de muestra (Train x alto), pero fuera de muestra hiciera falta más historia. Conclusión: con estos datos, comprar y mantener siguió siendo más robusto.'}
-    <br/><span style="opacity:.7">Búsqueda en ${r.elapsed_ms} ms · evolución: ${r.generations.map(g=>`g${g.gen}:${g.best}`).join(", ")}</span>
-  </div>`;
-  $("gaOut").innerHTML=`<div class="svgbox" id="svgOutG"></div>`+rec+rows;
-  drawSVG("G",[
-    {label:"Mejor (genética)",c:"gen",p:best.test.curve},
-    {label:"Buy & Hold",c:"test",p:r.benchmark.test.curve}
-  ]);
-}
+async function portfolio(){$("spP").classList.add("show");$("outP").innerHTML="";
+  const r=await post("api/portfolio",{capital:100});$("spP").classList.remove("show");
+  if(r.error){$("outP").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  drawSVG("P",[{label:"Benchmark",c:"bench",p:r.test.bench.curve},{label:"Agresiva",c:"agg",p:r.test.agg.curve},{label:"Defensiva",c:"def",p:r.test.def.curve}],"2024 → (fuera de muestra) → hoy");
+  const row=k=>{const v=r.test[k];return `<tr><td>${v.name}</td><td class="num">${v.final} €</td><td class="num ${v.multiple>=1?'up':'down'}">${xfmt(v.multiple)}</td><td class="num">${v.sharpe}</td><td class="num down">${pct(v.maxdd)}</td></tr>`;};
+  $("outP").innerHTML=`<table><thead><tr><th>Perfil</th><th class="num">100 € →</th><th class="num">Múltiplo</th><th class="num">Sharpe</th><th class="num">Max DD</th></tr></thead><tbody>${row("bench")}${row("agg")}${row("def")}</tbody></table>
+  <div class="sub" style="margin-top:8px">7 activos · costes reales · rebalanceo mensual · ${r.to} · ${r.elapsed_ms} ms</div>`;}
 
-// ---------- cartera multi-activo ----------
-async function portfolio(){
-  $("poSpinner").classList.add("show");$("poOut").innerHTML="";
-  const cap=parseFloat($("cap").value)||100;
-  const r=await post("api/portfolio",{capital:cap});
-  $("poSpinner").classList.remove("show");
-  if(r.error){$("poOut").innerHTML=`<div class="note">❌ ${r.error}</div>`;return;}
-  const t=r.test;
-  drawSVG("C",[
-    {label:t.bench.name,c:"test",p:t.bench.curve},
-    {label:t.agg.name,c:"agg",p:t.agg.curve},
-    {label:t.def.name,c:"def",p:t.def.curve}
-  ],"2024 ──────────────── (fuera de muestra) ────────────────── hoy");
-  const row=(k)=>{const v=t[k];
-    return `<tr><td>${v.name}</td><td class="num">${v.final} €</td><td class="num ${v.multiple>=1?'up':'down'}">${xfmt(v.multiple)}</td>
-      <td class="num">${v.sharpe}</td><td class="num down">${pct(v.maxdd)}</td></tr>`;};
-  $("poOut").innerHTML=`
-    <table><thead><tr><th>Perfil</th><th class="num">100 € →</th><th class="num">Múltiplo</th>
-      <th class="num">Sharpe</th><th class="num">Max DD</th></tr></thead><tbody>
-      ${row("bench")}${row("agg")}${row("def")}</tbody></table>
-    <div class="note" style="margin-top:10px">Fuera de muestra (2024→hoy) · 7 activos · costes reales · rebalanceo mensual · ${r.elapsed_ms} ms</div>`;
-}
+function strat(){const s=$("sStrat").value,b=$("sParams");b.innerHTML="";const d=DEFAULTS[s];if(!d)return;
+  for(const[k,v]of Object.entries(d)){const st=k==="target_vol"?'step="0.001"':"";b.innerHTML+=`<div class="fld" style="margin-top:10px;margin-right:12px;display:inline-flex"><label>${k}</label><input id="p_${k}" type="number" value="${v}" ${st}></div>`;}}
+function readParams(){const d=DEFAULTS[$("sStrat").value];if(!d)return{};const o={};for(const k of Object.keys(d))o[k]=parseFloat($("p_"+k).value);return o;}
+async function simul(){$("spSim").classList.add("show");$("outSim").innerHTML="";
+  const r=await post("api/simulate",{asset:$("sAsset").value,capital:+$("sCap").value||100,split:$("sSplit").value,strategy:$("sStrat").value,params:readParams()});
+  $("spSim").classList.remove("show");
+  if(r.error){$("outSim").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  drawSVG("Sim",[{label:$("sAsset").value+" · "+($("sStrat").value==="buyandhold"?"Buy&Hold":r.strategy),c:"bench",p:r.sim.curve}]);
+  $("outSim").innerHTML=metricsHTML(r.sim);}
+async function genetic(){$("spG").classList.add("show");$("outG").innerHTML="";
+  const r=await post("api/genetic",{asset:$("sAsset").value,capital:+$("sCap").value||100,population:+$("gPop").value||30,generations:+$("gGens").value||12});
+  $("spG").classList.remove("show");
+  if(r.error){$("outG").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  const top=r.top.slice().sort((a,b)=>b.test.sharpe-a.test.sharpe),be=r.benchmark.test;
+  let rows=top.map((t,i)=>`<tr class="${i?"":"best"}"><td>${i+1}</td><td>${t.strategy_name}</td><td style="color:var(--mut)">${JSON.stringify(t.params)}</td><td class="num">${xfmt(t.train.multiple)}</td><td class="num ${t.test.multiple>=1?'up':'down'}">${xfmt(t.test.multiple)}</td><td class="num">${t.test.sharpe}</td><td class="num down">${pct(t.test.maxdd)}</td></tr>`).join("");
+  rows+=`<tr><td>—</td><td><b>Comprar & Mantener</b></td><td>—</td><td class="num">${xfmt(r.benchmark.train.multiple)}</td><td class="num ${be.multiple>=1?'up':'down'}">${xfmt(be.multiple)}</td><td class="num">${be.sharpe}</td><td class="num down">${pct(be.maxdd)}</td></tr>`;
+  drawSVG("G",[{label:"Mejor genética",c:"bench",p:top[0].test.curve},{label:"Buy & Hold",c:"agg",p:be.curve}]);
+  $("outG").innerHTML=`<table><thead><tr><th>#</th><th>Estrategia</th><th>Parámetros</th><th class="num">Train x</th><th class="num">Test x</th><th class="num">Sharpe</th><th class="num">DD</th></tr></thead><tbody>${rows}</tbody></table>
+  <div class="banner" style="margin-top:12px">⚠️ La <b>Test</b> es la verdad: la genética selecciona en Train (luce x7-16) y fuera de muestra cae a x1.1-1.5. Nunca decidas con Train. · ${r.elapsed_ms} ms</div>`;}
 
-// ---------- live ----------
-async function live(){
-  const r=await (await fetch("api/live")).json();
-  if(!r||!r.assets){return;}
-  let html="";
-  for(const[sym,av]of Object.entries(r.assets)){
-    html+=`<span class="chip">${sym} · cierre <b>${av.last_close.toLocaleString("es-ES",{maximumFractionDigits:2})} $</b> (${av.last_date}) · ${av.bars} velas</span>`;
-  }
-  html+=`<button class="btn btn" style="background:var(--panel);border:1px solid var(--line)" onclick="refresh()">↻ Actualizar datos desde Binance</button>`;
-  $("live").innerHTML=html;
-}
-async function refresh(){
-  const r=await post("api/refresh",{});
-  alert(r.ok?"Datos actualizados a Binance ✅":"Error: "+(r.error||""));
-  live();
-}
-stratChanged();live();
+async function mirofish(){$("spM").classList.add("show");$("outM").innerHTML="";
+  const r=await post("api/scenarios",{capital:100});$("spM").classList.remove("show");
+  if(r.error){$("outM").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  const c=r.chosen||{};
+  let s=`<div class="banner">🎯 <b>Escenario a ejecutar: ${c.asset||"—"}</b> (${c.market||""}) · prob↑ ${(c.prob_up*100).toFixed(0)}%
+  <br/>Precio ${c.price} · objetivo <b>${c.target}</b> · stop <b>${c.stop}</b> · 100 € a 7d ≈ <b>${c.expect_7d} €</b></div>`;
+  if(c.scenarios_7d)s+=`<table><thead><tr><th>Escenario</th><th class="num">Prob</th><th class="num">Ruta 7d</th><th class="num">100 €</th></tr></thead><tbody>`+c.scenarios_7d.map(x=>`<tr><td>${x.nombre}</td><td class="num">${(x.prob*100).toFixed(0)}%</td><td class="num ${x.ruta>=0?'up':'down'}">${(x.ruta*100).toFixed(1)}%</td><td class="num">${x["100e"]} €</td></tr>`).join("")+`</tbody></table>`;
+  s+=`<table style="margin-top:10px"><thead><tr><th>Activo</th><th>Mercado</th><th class="num">Prob↑</th><th class="num">Score</th></tr></thead><tbody>`;
+  Object.entries(r.groups||{}).forEach(([g,arr])=>arr.slice(0,2).forEach(a=>s+=`<tr><td>${a.asset}</td><td>${g}</td><td class="num">${(a.prob_up*100).toFixed(0)}%</td><td class="num">${a.score}</td></tr>`));
+  s+=`</tbody></table>`;$("outM").innerHTML=s;}
+async function iasweep(){$("spI").classList.add("show");$("outI").innerHTML="";
+  let r;try{r=await (await fetch("api/ia")).json();}catch(e){r={error:String(e)};}
+  $("spI").classList.remove("show");
+  if(!r.assets){$("outI").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  const a=r.assets.slice().sort((x,y)=>y.upside-x.upside);
+  $("outI").innerHTML=`<table><thead><tr><th>Activo</th><th>Qué es</th><th>Estado</th><th class="num">12m</th><th class="num">Dist máx</th><th class="num">RSI</th></tr></thead><tbody>`+
+  a.map(x=>`<tr><td><b>${x.asset}</b></td><td style="color:var(--mut)">${x.hold}</td><td>${x.state}</td><td class="num ${x.chg12m>=0?'up':'down'}">${(x.chg12m*100).toFixed(1)}%</td><td class="num down">${(x.dist_high*100).toFixed(1)}%</td><td class="num">${x.rsi}</td></tr>`).join("")+`</tbody></table>
+  <div class="sub" style="margin-top:8px">Cadena de suministro IA (chips + materiales). Casi todo el complejo está en corrección/sobrevendido — verifica antes de entrar.</div>`;}
+async function verdict(){$("spV").classList.add("show");$("outV").innerHTML="";
+  const r=await post("api/verdict",{asset:$("vAsset").value,capital:100});$("spV").classList.remove("show");
+  if(r.error){$("outV").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  const cls=r.verdict&&r.verdict.startsWith("ENTRAR")?"up":"down";
+  $("outV").innerHTML=`<div class="banner">⚖️ <b>${r.asset}</b> a ${r.price} · Veredicto <b class="${cls}">${r.verdict}</b> · a favor ${r.yes} / en contra ${r.no}
+  <br/>Entrar ${r.entry} · objetivo ${r.target} · stop ${r.stop}</div>
+  <div class="agst">`+r.agents.map(a=>`<span class="ag ${a.voto===1?'yes':(a.voto===-1?'no':'')}"><b>${a.icon} ${a.nombre}</b>: ${a.stancia}</span>`).join("")+`</div>
+  <div class="sub" style="margin-top:10px">`+r.agents.map(a=>`<b>${a.icon} ${a.nombre}</b> — ${a.razon}<br/>`).join("")+`</div>`;}
+async function rollt(){$("spR").classList.add("show");$("outR").innerHTML="";
+  const r=await post("api/rotate",{capital:100});$("spR").classList.remove("show");
+  if(r.error){$("outR").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  const picks=Object.entries(r.picks||{}).map(([k,v])=>`${k}:${v}`).join(" · ");
+  $("outR").innerHTML=`<div class="svgbox" id="svgR"></div>
+  <div class="banner">🔁 <b>100 € → ${r.final} €</b> (${xfmt(r.multiple)} · Sharpe ${r.sharpe} · DD ${pct(r.maxdd)})
+  Perseguir el mejor momentum cada cierre con costes <b>pierde</b>. Elegido: ${picks}. Esto es lo que la plataforma te enseña a no hacer.</div>`;
+  if(r.curve&&r.curve.length)drawSVG("R",[{label:"Rotación diaria",c:"agg",p:r.curve}],"2024 → hoy");}
+
+strat();live();
 </script>
-</body>
-</html>
+</body></html>
