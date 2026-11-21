@@ -532,6 +532,12 @@ def handler_factory(static):
                                           "bars": len(prices)}
                 json_resp(self, out)
                 return
+            if u.path == "/api/ia":
+                json_resp(self, ia_sweep())
+                return
+            if u.path == "/api/sweep":
+                json_resp(self, market_sweep())
+                return
             if u.path == "/" or u.path.startswith("/index"):
                 try:
                     data = open(static, "rb").read()
