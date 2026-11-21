@@ -14,22 +14,68 @@ TradeFactor AI simulates what really happens to your money — with real histori
 - **Apple-clean web UI** — light/dark theme, multi-market tickers, portfolio curves, and the "Alpha live" screen where you watch the agents think (probability lattice, relation graph, price pulse).
 - **Paper-first execution** — designed around Alpaca (stocks) and Binance (crypto) via MCP. No real money until you decide.
 
-## Quickstart
+## Screens
+
+Apple-clean UI, light/dark, with the agents visible while they think.
+
+![Portafolio](docs/screens/screen1.png)
+![Alpha en vivo](docs/screens/screen5.png)
+![Modo claro](docs/screens/app-light.png) ![Modo oscuro](docs/screens/app-dark.png)
+
+Interactive mockups live in [`mockups/`](mockups/).
+
+## Install (from scratch, anyone can follow)
+
+Prerequisites: Python **3.10+**, and a working internet connection (Binance + Yahoo Finance APIs).
 
 ```bash
-cd trading-sim
-python3 -m venv .venv && .venv/bin/pip install pandas numpy yfinance
+# 1) clone
+git clone https://github.com/jesparbem/tradefactor-ai.git
+cd tradefactor-ai
 
-# 1) fetch data
-.venv/bin/python multi_data.py          # crypto (Binance) + stocks/commodities/FX (Yahoo)
-.venv/bin/python fetch_ia.py            # AI supply chain (chips + materials)
+# 2) virtualenv + deps
+python3 -m venv .venv
+.venv/bin/pip install --upgrade pip
+.venv/bin/pip install pandas numpy yfinance
 
-# 2) run the honest backtest + multi-asset portfolio
-.venv/bin/python simcore.py
-.venv/bin/python portsim.py
+# 3) download historical data (multi-market + AI supply chain)
+.venv/bin/python multi_data.py
+.venv/bin/python fetch_ia.py
 
-# 3) serve the web app (API: /api/simulate, /api/genetic, /api/portfolio, /api/scenarios, /api/rotate, /api/ia)
-python3 web/server.py                   # http://localhost:8766
+# 4) verify the backtest engine
+.venv/bin/python simcore.py        # single-asset honest backtest
+.venv/bin/python portsim.py        # multi-asset portfolio
+
+# 5) run the web app
+cd web
+python3 ../web/server.py            # http://localhost:8766
+```
+
+### Run as a service (systemd)
+
+Edit paths to match your clone, save as `/etc/systemd/system/tradefactor.service`, then `systemctl enable --now tradefactor`:
+
+```ini
+[Unit]
+Description=TradeFactor AI simulator
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/tradefactor/trading-sim
+ExecStart=/usr/bin/python3 /opt/tradefactor/trading-sim/web/server.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
+```
+
+### Serve behind Caddy (optional)
+
+```caddyfile
+tradefactor.example.com {
+    reverse_proxy 127.0.0.1:8766
+}
 ```
 
 ## API

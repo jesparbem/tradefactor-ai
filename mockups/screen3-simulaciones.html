@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOCKUP 3 · Simulaciones</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--mut:#86868b;--line:#e2e2e6;--blue:#0071e3;--up:#2ea043;--down:#e0442e;--amber:#ff9f0a;--violet:#bf5af2}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--ink)}
+.wrap{max-width:1180px;margin:0 auto}
+.top{position:sticky;top:0;background:rgba(255,255,255,.78);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);z-index:5}
+.top .wrap{display:flex;align-items:center;gap:26px;padding:14px 0}
+.brand{font-weight:700;font-size:1.15rem}.brand span{color:var(--blue)}
+.nav{display:flex;gap:4px}.nav a{color:var(--mut);text-decoration:none;font-size:.92rem;padding:7px 14px;border-radius:999px}.nav a.on{background:#e8edf7;color:var(--blue);font-weight:600}
+.spacer{flex:1}.user{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0071e3,#34c1ff);color:#fff;display:grid;place-items:center;font-weight:600}
+.head{padding:30px 0 6px}.path{color:var(--mut);font-size:.82rem;margin-bottom:6px}
+h1{font-size:1.6rem;letter-spacing:-.02em;font-weight:700}
+.sub{color:var(--mut);font-size:.9rem;margin-top:6px}
+.layout{display:grid;grid-template-columns:1fr 2.2fr;gap:16px;margin-top:20px}
+.side{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05);height:fit-content}
+.side h2{font-size:.8rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:12px}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:.72rem;color:var(--mut);margin-bottom:4px;font-weight:600}
+.in{width:100%;border:1px solid var(--line);border-radius:10px;padding:9px 11px;font-size:.9rem;background:#fafafc}
+.btn{width:100%;background:var(--blue);color:#fff;border:none;border-radius:12px;padding:11px;font-size:.9rem;font-weight:600;cursor:pointer}
+.note{font-size:.72rem;color:var(--mut);margin-top:10px;line-height:1.4}
+.scen{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;align-content:start}
+.sc{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.sc .tag{font-size:.64rem;font-weight:700;padding:2px 9px;border-radius:999px}
+.t-g{background:#f3eaff;color:#7a28c9}.t-r{background:#e8f6ee;color:#1f8f4d}.t-m{background:#ebf5ff;color:#0068c4}
+.sc h3{font-size:.95rem;margin:8px 0 2px;font-weight:700}
+.sc .ass{font-size:.75rem;color:var(--mut)}
+.sc .big2{display:flex;align-items:baseline;gap:10px;margin-top:10px}
+.sc .fin{font-size:1.7rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.sc svg{display:block;width:100%;height:52px;margin-top:8px}
+.mets{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px;font-size:.72rem;color:#515154}
+.mets span{background:#f5f5f7;border-radius:7px;padding:3px 8px}
+.bench{grid-column:1/-1;background:#f4f9ff;border:1px solid #d8e8ff;border-radius:14px;padding:12px 14px;font-size:.82rem;color:#1a4b87}
+.up{color:var(--up)}.down{color:var(--down)}
+.foot{color:var(--mut);font-size:.74rem;text-align:center;margin:18px 0 10px}
+@media(max-width:880px){.layout{grid-template-columns:1fr}.scen{grid-template-columns:1fr}}
+</style></head><body>
+<div class="top"><div class="wrap">
+  <div class="brand">Factor<span>IA</span> Terminal</div>
+  <nav class="nav"><a>Portafolio</a><a>Mercado</a><a>Agentes</a><a class="on">Simulaciones</a></nav>
+  <div class="spacer"></div><div class="user">W</div>
+</div></div>
+<div class="wrap">
+  <div class="head"><div class="path">Simulaciones / Escenarios</div>
+    <h1>Con 100 €, donde meter el dinero</h1>
+    <div class="sub">Miles de escenarios simulados sobre historicos reales con costes. El numero de <b>fuera de muestra</b> (2024→hoy) es el que manda — el de entrenamiento esta sobre-ajustado de fabrica.</div>
+  </div>
+
+  <div class="layout">
+    <div class="side">
+      <h2>Nueva simulación</h2>
+      <div class="field"><label>Activo / mercado</label><select class="in"><option>BTC · cripto</option><option>NVDA · acciones</option><option>ORO · materias</option><option>EUR/USD · divisas</option><option>Cartera mixta</option></select></div>
+      <div class="field"><label>Capital inicial (€)</label><input class="in" value="100" type="number"></div>
+      <div class="field"><label>Estrategia</label><select class="in"><option>Momentum + régimen 30/200</option><option>Genética (busca sola)</option><option>Cruce de medias</option><option>Momentum + volatilidad</option><option>Comprar y mantener</option></select></div>
+      <div class="field"><label>Periodo</label><select class="in"><option>Fuera de muestra (2024→hoy)</option><option>Entrenamiento (2019-23)</option><option>Todo</option></select></div>
+      <button class="btn">▶ Ejecutar simulación</button>
+      <div class="note">Costes reales por mercado (0,08%–0,15% por lado). Reinversion total: los 100 € se reinvierten.</div>
+    </div>
+
+    <div class="scen">
+      <div class="sc"><span class="tag t-g">🧬 Genética</span><h3>Cartera mixta (cripto+acciones+materias)</h3><div class="ass">4 activos · rebalanceo mensual</div>
+        <div class="big2"><span class="fin up">166,40 €</span> <span class="up">x1,67</span></div>
+        <svg viewBox="0 0 180 40"><path d="M0 32 L20 30 L40 31 L60 24 L80 26 L100 19 L120 16 L140 13 L160 10 L180 8" fill="none" stroke="#2ea043" stroke-width="2"/></svg>
+        <div class="mets"><span>Sharpe 0,76</span><span>DD −25%</span><span>mejor que Buy&Hold</span></div></div>
+      <div class="sc"><span class="tag t-r">📈 Regla</span><h3>Comprar y mantener BTC</h3><div class="ass">benchmark</div>
+        <div class="big2"><span class="fin up">129,60 €</span> <span class="up">x1,30</span></div>
+        <svg viewBox="0 0 180 40"><path d="M0 34 L20 32 L40 33 L60 30 L80 26 L100 24 L120 20 L140 18 L160 16 L180 15" fill="none" stroke="#0071e3" stroke-width="2"/></svg>
+        <div class="mets"><span>DD −53%</span><span>sin filtro</span></div></div>
+      <div class="sc"><span class="tag t-m">🤖 ML</span><h3>Predictor ML · NVDA + SPY</h3><div class="ass">modelo sobre historicos</div>
+        <div class="big2"><span class="fin up">151,10 €</span> <span class="up">x1,51</span></div>
+        <svg viewBox="0 0 180 40"><path d="M0 33 L20 31 L40 30 L60 26 L80 24 L100 21 L120 17 L140 14 L160 12 L180 10" fill="none" stroke="#bf5af2" stroke-width="2"/></svg>
+        <div class="mets"><span>Sharpe 0,61</span><span>DD −28%</span></div></div>
+      <div class="sc"><span class="tag t-r">🛡️</span><h3>Oro + cobertura (diversificar)</h3><div class="ass">60% oro · 40% efectivo</div>
+        <div class="big2"><span class="fin up">118,30 €</span> <span class="up">x1,18</span></div>
+        <svg viewBox="0 0 180 40"><path d="M0 33 L20 32 L40 32 L60 30 L80 29 L100 28 L120 26 L140 25 L160 24 L180 22" fill="none" stroke="#ff9f0a" stroke-width="2"/></svg>
+        <div class="mets"><span>Sharpe 0,72</span><span>DD −6%</span><span>menos riesgo</span></div></div>
+      <div class="bench">💡 <b>Lectura honesta:</b> ninguna estrategia honesta saca x10 en una semana. La cartera mixta (genética) gana x1,67 frente a x1,30 de comprar-y-mantener, con menos drawdown — es la candidata actual. Oro aguanta peor en subida pero disciplina el riesgo.</div>
+    </div>
+  </div>
+
+  <div class="foot">MOCKUP 3 de 4 · Simulaciones · previsualizacion (datos ilustrativos, no es asesoramiento)</div>
+</div></body></html>

@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="light">
+<head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FactorIA Terminal · Mockup navegable</title>
+<style>
+:root[data-theme="light"]{
+  --bg:#f5f5f7;--card:#ffffff;--ink:#1d1d1f;--mut:#86868b;--line:#e2e2e6;--hair:#f0f0f2;
+  --blue:#0071e3;--up:#2ea043;--down:#e0442e;--amber:#ff9f0a;--violet:#bf5af2;
+  --rise-bg:#e6f9ee;--fall-bg:#ffe9e7;--info-bg:#eef6ff;--info-bd:#cfe3ff;--info-ink:#0057a3;
+  --nav-on:#e8edf7;--soft:#fafafc;--chip:#ebf5ff;--grid:#e3e9f2;
+}
+:root[data-theme="dark"]{
+  --bg:#000000;--card:#1c1c1e;--ink:#f5f5f7;--mut:#98989e;--line:#2c2c2e;--hair:#232327;
+  --blue:#0a84ff;--up:#30d158;--down:#ff453a;--amber:#ff9f0a;--violet:#bf5af2;
+  --rise-bg:#12301d;--fall-bg:#38120e;--info-bg:#0d1d30;--info-bd:#1b3a5f;--info-ink:#6eb0ff;
+  --nav-on:#1f2a3d;--soft:#26262a;--chip:#12233a;--grid:#2c3450;
+}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--ink);transition:background .25s,color .25s}
+.wrap{max-width:1180px;margin:0 auto}
+.top{position:sticky;top:0;background:color-mix(in srgb,var(--card) 78%,transparent);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);z-index:50}
+.top .wrap{display:flex;align-items:center;gap:18px;padding:13px 0;flex-wrap:wrap}
+.brand{font-weight:700;font-size:1.12rem}.brand span{color:var(--blue)}
+.nav{display:flex;gap:3px;flex-wrap:wrap}
+.nav button{background:none;border:none;color:var(--mut);font-size:.9rem;padding:7px 13px;border-radius:999px;cursor:pointer;font-family:inherit}
+.nav button.on{background:var(--nav-on);color:var(--blue);font-weight:600}
+.spacer{flex:1}
+.theme{display:flex;gap:3px;background:var(--hair);border:1px solid var(--line);border-radius:999px;padding:3px}
+.theme button{border:none;background:none;width:34px;height:30px;border-radius:999px;cursor:pointer;font-size:1rem}
+.theme button.on{background:var(--card);box-shadow:0 1px 3px rgba(0,0,0,.25)}
+.user{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--blue),#34c1ff);color:#fff;display:grid;place-items:center;font-weight:600}
+.screen{display:none;padding:26px 0 30px}
+.screen.on{display:block}
+.path{color:var(--mut);font-size:.82rem;margin-bottom:8px}
+h1{font-size:1.5rem;letter-spacing:-.02em;font-weight:700;margin-bottom:6px}
+.sub{color:var(--mut);font-size:.88rem;margin-bottom:16px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 3px 14px rgba(0,0,0,.07)}
+.card h3{font-size:.78rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;display:flex;justify-content:space-between;align-items:baseline;font-weight:600}
+.banner{background:var(--info-bg);border:1px solid var(--info-bd);color:var(--info-ink);border-radius:12px;padding:10px 14px;font-size:.83rem;margin-bottom:16px;line-height:1.5}
+.banner b{font-weight:600}
+.up{color:var(--up)}.down{color:var(--down)}
+.big{font-size:2.1rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.statline{display:flex;gap:14px;flex-wrap:wrap;margin:6px 0;font-size:.8rem;color:#7a7a80}
+.statline b{color:var(--ink);font-weight:600}
+.ticks{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.tick{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px}
+.tick .nm{font-size:.8rem;color:var(--mut);font-weight:600;display:flex;gap:7px;align-items:center}
+.delay{font-size:.6rem;padding:1px 7px;border-radius:999px;font-weight:600;background:var(--chip);color:var(--blue)}
+.delay.live{background:var(--rise-bg);color:var(--up)}
+.tick .pr{font-size:1.35rem;font-weight:700;margin:5px 0 1px;font-variant-numeric:tabular-nums}
+.tick .ch{font-size:.82rem;font-weight:600}
+.agents{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;margin-top:14px}
+.agent{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:13px}
+.agent .ah{display:flex;align-items:center;gap:9px;margin-bottom:7px}
+.ico{width:36px;height:36px;border-radius:10px;display:grid;place-items:center;font-size:1.1rem;color:#fff}
+.a1{background:linear-gradient(135deg,#0071e3,#34c1ff)}.a2{background:linear-gradient(135deg,#30d158,#a2e86a)}
+.a3{background:linear-gradient(135deg,#bf5af2,#e0a3ff)}.a4{background:linear-gradient(135deg,#ff9f0a,#ffd60a)}
+.a5{background:linear-gradient(135deg,#ff3b30,#ff6961)}.a6{background:linear-gradient(135deg,#5458c3,#3a3d9e)}.a7{background:#2c2c2e}
+.agent .nm{font-weight:700;font-size:.9rem}
+.role{font-size:.68rem;color:var(--mut)}
+.st{font-size:.64rem;font-weight:700;padding:2px 8px;border-radius:999px;margin-left:auto;background:var(--hair);color:var(--mut);font-family:inherit}
+.st.ok{background:var(--rise-bg);color:var(--up)}.st.no{background:var(--fall-bg);color:var(--down)}
+.doing{font-size:.76rem;background:var(--soft);border-radius:9px;padding:7px 8px;min-height:52px;line-height:1.4;color:#64646a}
+.doing b{color:var(--ink)}
+.log{font-size:.68rem;color:var(--mut);margin-top:6px;line-height:1.5;border-top:1px solid var(--hair);padding-top:6px}
+.scen{display:grid;grid-template-columns:repeat(2,1fr);gap:13px}
+.sc{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px}
+.sc .tag{font-size:.62rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--blue)}
+.sc .fn{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+.sc svg{display:block;width:100%;height:46px;margin-top:6px}
+.mets{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px;font-size:.7rem;color:#7a7a80}
+.mets span{background:var(--hair);border-radius:6px;padding:2px 7px}
+.pulse svg,.pins svg,.graph svg{width:100%;display:block}
+.pulse{height:110px}.pins{position:relative;height:150px}.graph{height:180px}
+.edge-bars{display:flex;align-items:flex-end;gap:2px;height:84px;margin-top:8px}
+.edge-bars div{flex:1;border-radius:2px 2px 0 0;background:#6090d0}.edge-bars div.neg{background:#b07060}
+.agent-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.ag{font-size:.7rem;border:1px solid var(--line);border-radius:999px;padding:4px 10px;background:var(--soft);color:var(--mut)}
+.ag b{color:var(--ink)}
+.foot{color:var(--mut);font-size:.73rem;text-align:center;margin:16px 0 8px}
+.news .ni{display:flex;gap:9px;padding:8px 0;border-top:1px solid var(--hair);font-size:.8rem}
+.sent{font-size:.62rem;font-weight:700;padding:1px 7px;border-radius:999px;background:var(--hair);color:var(--mut);flex-shrink:0}
+.sent.p{background:var(--rise-bg);color:var(--up)}.sent.n{background:var(--fall-bg);color:var(--down)}
+@media(max-width:860px){.grid,.agents{grid-template-columns:1fr}.ticks{grid-template-columns:repeat(2,1fr)}.scen{grid-template-columns:1fr}}
+</style></head>
+<body>
+<div class="top"><div class="wrap">
+  <div class="brand">Factor<span>IA</span> Terminal</div>
+  <nav class="nav">
+    <button class="on" data-t="p">Portafolio</button>
+    <button data-t="a">Agentes</button>
+    <button data-t="s">Simulaciones</button>
+    <button data-t="m">Mercado</button>
+    <button data-t="x">Alpha en vivo</button>
+  </nav>
+  <div class="spacer"></div>
+  <div class="theme">
+    <button id="tLight" title="Modo claro">☀️</button>
+    <button id="tDark" title="Modo oscuro">🌙</button>
+  </div>
+  <div class="user">W</div>
+</div></div>
+
+<!-- ============ P: PORTAFOLIO ============ -->
+<section class="screen on" id="p">
+  <div class="wrap">
+    <div class="path">Portafolio · Resumen en vivo</div>
+    <h1>13.482,40 € <span class="up" style="font-size:1.1rem">▲ +8,4% hoy</span></h1>
+    <div class="sub">capital simulado · 100 € iniciales · 8 agentes analizando · cripto en tiempo real, bolsa ±15 min</div>
+    <div class="banner">🔔 <b>2 rupturas hoy:</b> BTC superó 58.0k · NVDA rompió máximos de 8 meses. Crítica y Riesgo valorando entrar.</div>
+    <div class="grid">
+      <div class="card"><h3>Evolución del portafolio</h3>
+        <svg viewBox="0 0 520 150" style="width:100%;height:150px"><rect x="0" y="122" width="520" height="1" fill="var(--hair)"/>
+        <path d="M0 140 L40 134 L80 137 L120 120 L160 122 L200 100 L240 104 L280 84 L320 88 L360 66 L400 52 L440 40 L520 26" fill="none" stroke="var(--blue)" stroke-width="2.6" stroke-linecap="round"/><circle cx="520" cy="26" r="5" fill="var(--card)" stroke="var(--blue)" stroke-width="2.4"/></svg></div>
+      <div class="card"><h3>Distribución</h3>
+        <svg viewBox="0 0 200 120"><circle cx="100" cy="60" r="50" fill="none" stroke="var(--blue)" stroke-width="26" stroke-dasharray="120 200" transform="rotate(-90 100 60)"/><circle cx="100" cy="60" r="50" fill="none" stroke="var(--up)" stroke-width="26" stroke-dasharray="75 200" stroke-dashoffset="-120" transform="rotate(-90 100 60)"/><circle cx="100" cy="60" r="50" fill="none" stroke="var(--amber)" stroke-width="26" stroke-dasharray="56 200" stroke-dashoffset="-195" transform="rotate(-90 100 60)"/><circle cx="100" cy="60" r="50" fill="none" stroke="var(--violet)" stroke-width="26" stroke-dasharray="34 200" stroke-dashoffset="-251" transform="rotate(-90 100 60)"/><circle cx="100" cy="60" r="50" fill="none" stroke="var(--down)" stroke-width="26" stroke-dasharray="22 200" stroke-dashoffset="-285" transform="rotate(-90 100 60)"/><text x="100" y="57" text-anchor="middle" font-size="14" font-weight="700">100 €</text><text x="100" y="73" text-anchor="middle" font-size="9" fill="var(--mut)">inicial</text></svg>
+        <div class="statline" style="margin-top:6px"><span style="color:var(--blue)">●</span><b>Cripto 32%</b><span style="color:var(--up)">●</span><b>Acciones 29%</b><span style="color:var(--amber)">●</span><b>Materias 20%</b></div></div>
+    </div>
+    <div class="ticks">
+      <div class="tick"><div class="nm">BTC/USD <span class="delay live">LIVE</span></div><div class="pr">58.324</div><div class="ch up">▲ +2,41%</div></div>
+      <div class="tick"><div class="nm">ETH/USD <span class="delay live">LIVE</span></div><div class="pr">1.602</div><div class="ch down">▼ −0,9%</div></div>
+      <div class="tick"><div class="nm">NVDA <span class="delay">15m</span></div><div class="pr">148,22</div><div class="ch up">▲ +3,1%</div></div>
+      <div class="tick"><div class="nm">SPY <span class="delay">15m</span></div><div class="pr">604,10</div><div class="ch up">▲ +0,6%</div></div>
+      <div class="tick"><div class="nm">ORO <span class="delay">15m</span></div><div class="pr">2.712</div><div class="ch up">▲ +0,4%</div></div>
+      <div class="tick"><div class="nm">WTI <span class="delay">15m</span></div><div class="pr">68,4</div><div class="ch down">▼ −1,6%</div></div>
+      <div class="tick"><div class="nm">EUR/USD <span class="delay">15m</span></div><div class="pr">1,081</div><div class="ch up">▲ +0,1%</div></div>
+      <div class="tick"><div class="nm">AAPL <span class="delay">15m</span></div><div class="pr">342,56</div><div class="ch down">▼ −1,2%</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ A: AGENTES ============ -->
+<section class="screen" id="a">
+  <div class="wrap">
+    <div class="path">Agentes · Guerra de ideas en vivo</div>
+    <h1>La red analizando BTC ahora mismo</h1>
+    <div class="sub">8 agentes publican lo que piensan. Nada se ejecuta sin pasar por Examina + Riesgo.</div>
+    <div class="agents">
+      <div class="agent"><div class="ah"><div class="ico a1">🔎</div><div><div class="nm">Investigador</div><div class="role">contexto/datos</div></div><span class="st">Investiga</span></div>
+        <div class="doing"><b>¿Qué está haciendo:</b> mapea órdenes de BTC y volumen.</div><div class="log"><div>▪ volumen x2,3</div><div>▪ sin macro hoy</div></div></div>
+      <div class="agent"><div class="ah"><div class="ico a2">📊</div><div><div class="nm">Técnico</div><div class="role">momentum/régimen</div></div><span class="st ok">A favor</span></div>
+        <div class="doing"><b>¿Qué está haciendo:</b> cruce 30/200 alcista, break de 58.0k confirmado.</div><div class="log"><div>▪ mom 30d +18%</div><div>▪ precio > MA200</div></div></div>
+      <div class="agent"><div class="ah"><div class="ico a3">🧠</div><div><div class="nm">Predictor ML</div><div class="role">modelos históricos</div></div><span class="st">Predice</span></div>
+        <div class="doing"><b>¿Qué está haciendo:</b> backtest 2.881 velas; momentum+régimen x1,67 OOS.</div><div class="log"><div>▪ prob 60% cont. 7d</div><div>▪ escenario 64,2k</div></div></div>
+      <div class="agent"><div class="ah"><div class="ico a4">📰</div><div><div class="nm">Noticias</div><div class="role">sentimiento</div></div><span class="st">Lee</span></div>
+        <div class="doing"><b>¿Qué está haciendo:</b> cruza titulares con el plano del día.</div><div class="log"><div>▪ 4/6 positivos</div><div>▪ ETF +310M</div></div></div>
+      <div class="agent"><div class="ah"><div class="ico a5">😈</div><div><div class="nm">Crítico</div><div class="role">abogado del diablo</div></div><span class="st">Cuestiona</span></div>
+        <div class="doing"><b>¿Qué está haciendo:</b> por qué NO entrar: RSI 71 sobrecomprado, posible fake-out.</div><div class="log"><div>▪ exige stop 54,8k</div></div></div>
+      <div class="agent"><div class="ah"><div class="ico a5">🎓</div><div><div class="nm">Examinador</div><div class="role">grilla (Jane Street)</div></div><span class="st">Examina</span></div>
+        <div class="doing"><b>¿Qué está haciendo:</b> le pregunta a la estrategia qué pasa si NVDA corrige.</div><div class="log"><div>▪ escenario estresado OK</div></div></div>
+      <div class="agent"><div class="ah"><div class="ico a6">🛡️</div><div><div class="nm">Riesgo</div><div class="role">reglas deterministas</div></div><span class="st ok">Aprueba</span></div>
+        <div class="doing"><b>¿Qué está haciendo:</b> validando tamaño vs varianza y drawdown máx.</div><div class="log"><div>▪ ≤25% capital</div><div>▪ sin apalancamiento</div></div></div>
+      <div class="agent"><div class="ah"><div class="ico a7">⚡</div><div><div class="nm">Ejecutor</div><div class="role">modo simulación</div></div><span class="st ok">En cola</span></div>
+        <div class="doing"><b>¿Qué está haciendo:</b> orden en PAPEL, sin dinero real, esperando OK.</div></div>
+    </div>
+    <div class="banner" style="margin-top:16px">Veredicto: <b>Entrar en BTC · pequeño</b> · 3 a favor / 1 en contra · Consentido por Examinador y Riesgo (stop 54,8k, máx 25%).</div>
+  </div>
+</section>
+
+<!-- ============ S: SIMULACIONES ============ -->
+<section class="screen" id="s">
+  <div class="wrap">
+    <div class="path">Simulaciones · Escenarios con 100 €</div>
+    <h1>Dónde meter el dinero</h1>
+    <div class="sub">Resultados fuera de muestra (2024→hoy) con costes reales. El número de entrenamiento está sobre-ajustado de fábrica.</div>
+    <div class="scen">
+      <div class="sc"><span class="tag">🧬 Genética · cartera mixta</span><div class="fn up">166,40 € <small>x1,67</small></div>
+        <svg viewBox="0 0 180 40"><path d="M0 32 L24 30 L48 31 L72 24 L96 26 L120 19 L144 16 L180 8" fill="none" stroke="var(--up)" stroke-width="2"/></svg>
+        <div class="mets"><span>Sharpe 0,76</span><span>DD −25%</span></div></div>
+      <div class="sc"><span class="tag">📈 Comprar y mantener</span><div class="fn up">129,60 € <small>x1,30</small></div>
+        <svg viewBox="0 0 180 40"><path d="M0 34 L24 32 L48 33 L72 30 L96 26 L120 24 L144 20 L180 15" fill="none" stroke="var(--blue)" stroke-width="2"/></svg>
+        <div class="mets"><span>DD −53%</span></div></div>
+      <div class="sc"><span class="tag">🛡️ Defensiva (oro+cobertura)</span><div class="fn up">157,02 € <small>x1,57</small></div>
+        <svg viewBox="0 0 180 40"><path d="M0 33 L24 32 L48 32 L72 30 L96 29 L120 27 L144 25 L180 22" fill="none" stroke="var(--amber)" stroke-width="2"/></svg>
+        <div class="mets"><span>Sharpe 1,26</span><span>DD −21%</span></div></div>
+      <div class="sc"><span class="tag">🤖 ML NVDA+SPY</span><div class="fn up">151,10 € <small>x1,51</small></div>
+        <svg viewBox="0 0 180 40"><path d="M0 33 L24 31 L48 30 L72 26 L96 24 L120 21 L144 17 L180 10" fill="none" stroke="var(--violet)" stroke-width="2"/></svg>
+        <div class="mets"><span>Sharpe 0,61</span><span>DD −28%</span></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ M: MERCADO ============ -->
+<section class="screen" id="m">
+  <div class="wrap">
+    <div class="path">Mercado · BTC/USD</div>
+    <h1>BTC/USD · Binance <span class="up" style="font-size:1.05rem">▲ 58.324,00 $ · +2,41%</span></h1>
+    <div class="sub">Ruptura de 58.0k confirmada · live</div>
+    <div class="banner">⚡ <b>Ruptura de 58.0k confirmada</b> · vol x2,3 · stop sugerido 54,8k · consenso: COMPRAR (moderado). Operando en simulación hasta conectar Alpaca/Binance.</div>
+    <div class="grid">
+      <div class="card"><h3>Precio · 90 días · ruptura resaltada</h3>
+        <svg viewBox="0 0 520 150" style="width:100%;height:150px">
+          <rect x="0" y="110" width="520" height="1" fill="var(--hair)"/>
+          <path d="M0 130 L40 126 L80 128 L120 118 L160 120 L200 108 L240 112 L280 96 L320 100 L360 84 L400 70 L440 56 L480 44 L520 30" fill="none" stroke="var(--blue)" stroke-width="2.4"/>
+          <polygon points="380,18 396,34 364,34" fill="none" stroke="var(--amber)" stroke-width="2"/><text x="396" y="30" fill="var(--amber)" font-size="11">ruptura 58,0k</text>
+          <line x1="0" y1="64" x2="520" y2="64" stroke="var(--grid)" stroke-dasharray="4 4"/>
+        </svg></div>
+      <div class="card"><h3>Noticias y sentimiento</h3>
+        <div class="news"><div class="ni"><span class="sent p">+</span><div>ETF de Bitcoin +310M en entradas <small style="color:var(--mut)">Reuters · 2h</small></div></div>
+        <div class="ni"><span class="sent p">+</span><div>Hash-rate en máximo histórico <small style="color:var(--mut)">CoinDesk · 5h</small></div></div>
+        <div class="ni"><span class="sent n">−</span><div>RSI semanal 71: sobrecompra <small style="color:var(--mut)">Técnico</small></div></div></div>
+        <div class="agent-strip"><span class="ag"><b>Entrar</b> 58.324</span><span class="ag up"><b>Objetivo</b> 64.200</span><span class="ag down"><b>Stop</b> 54.800</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ X: ALPHA EN VIVO ============ -->
+<section class="screen" id="x">
+  <div class="wrap">
+    <div class="path">Alpha en vivo · Escenarios de futuro</div>
+    <h1>La red piensa el camino del dinero</h1>
+    <div class="sub">Máquina de probabilidad, grafo Mirofish, pulso del precio y distribución de la ventaja. Se mueven en vivo.</div>
+    <div class="banner">⚡ Simulando: BTC 58.324 $ · convergencia <b>PREDICTED: UP</b> · EV +845 € · confianza 91,4%</div>
+    <div class="grid">
+      <div class="card"><h3>Probability Lattice <span>36.402 ops · un tablero</span></h3>
+        <div class="statline"><span>8 compuertas</span><span>Bias <b>+6,5</b></span><span>Caídas <b id="balls">0</b></span><span style="color:var(--up)" id="landed">Acierto −</span></div>
+        <div class="pins"><svg id="pinsSvg" viewBox="0 0 500 140"></svg></div>
+        <div class="statline"><span>EV <b style="color:var(--up)">+845 €</b></span><span>P&L sesión <b style="color:var(--up)">+3.342 €</b></span><span>All-time <b style="color:var(--up)">+438.086 €</b></span></div>
+      </div>
+      <div class="card"><h3>Mirofish · grafo de escenarios <span style="color:var(--up)">⚡ PREDICTED: UP</span></h3>
+        <div class="statline"><span>Nodos 66</span><span>Señal <b id="sig">98,6%</b></span><span>Confianza <b id="conf">91,4%</b></span></div>
+        <div class="graph"><svg id="graphSvg"></svg></div>
+        <div class="statline"><span style="color:var(--up)">Rutas bull 4.621</span><span style="color:var(--down)">bear 482</span></div>
+      </div>
+      <div class="card"><h3>BTC Hourly Pulse <span id="round">Ronda #7165</span></h3>
+        <div class="statline"><span>Precio 58.324</span><span>Objetivo 58.400</span><span style="color:var(--up)">Fuerza <b id="force">67%</b></span></div>
+        <div class="pulse"><svg id="pulseSvg" viewBox="0 0 500 100"></svg></div>
+      </div>
+      <div class="card"><h3>Edge Distribution 24H</h3>
+        <div class="edge-bars" id="edgeBars"></div>
+        <div class="statline"><span style="color:var(--up)">Ventaja media +2,4%</span><span>Cola derecha 65%</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="wrap"><div class="foot">FactorIA Terminal · mockup navegable (pestañas y tema claro/oscuro funcionales) · datos ilustrativos, no asesoramiento</div></div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+// ----- pestañas
+document.querySelectorAll(".nav button").forEach(b=>b.addEventListener("click",()=>{
+  document.querySelectorAll(".nav button").forEach(x=>x.classList.remove("on"));
+  b.classList.add("on");
+  document.querySelectorAll(".screen").forEach(s=>s.classList.remove("on"));
+  $(""+b.dataset.t).classList.add("on");
+  window.scrollTo({top:0});
+}));
+// ----- tema claro/oscuro
+const setTheme=t=>{document.documentElement.dataset.theme=t;
+  $("tLight").classList.toggle("on",t==="light");$("tDark").classList.toggle("on",t==="dark");
+  try{localStorage.setItem("ft-theme",t);}catch(e){}};
+$("tLight").onclick=()=>setTheme("light");$("tDark").onclick=()=>setTheme("dark");
+try{setTheme(localStorage.getItem("ft-theme")||"light");}catch(e){setTheme("light");}
+// ----- Galton
+const catchers=Array(9).fill(0);
+function drawPins(){let h="";const rows=[[50],[100],[150],[200],[250],[300],[350],[400],[450]];
+  for(let r=0;r<6;r++){const y=12+r*20;rows[r%2?r:r].forEach(px=>{h+=`<circle cx="${px*0.92}" cy="${y}" r="2.5" fill="var(--grid)"/>`;});}
+  h+=`<rect x="225" y="118" width="55" height="3" fill="var(--grid)"/>`;
+  $("pinsSvg").innerHTML=h;}
+setInterval(()=>{let idx=4;for(let i=0;i<8;i++){idx+=Math.random()<0.56?0.5:-0.5;}idx=Math.max(0,Math.min(8,Math.round(idx)));
+  catchers[idx]++;const total=catchers.reduce((a,b)=>a+b,0);
+  $("balls").textContent=total;$("landed").textContent="Acierto "+(catchers.slice(5).reduce((a,b)=>a+b,0)/total*100).toFixed(1)+"%";},320);
+// ----- grafo
+function buildGraph(){let h="";const cx=250,cy=90,R=62;const cols=["#2ea043","#e0442e","#0071e3"];
+  for(let i=0;i<50;i++){const a=i/50*Math.PI*2+rnd(-.25,.25),r=R+rnd(-18,18),t=Math.random()<0.5?0:(Math.random()<0.5?1:2);
+    h+=`<circle cx="${cx+Math.cos(a)*r}" cy="${cy+Math.sin(a)*r}" r="${rnd(3,6)}" fill="${cols[t]}" opacity=".85"/>`;}
+  $("graphSvg").innerHTML=h;$("conf").textContent=(91+Math.random()*1.4).toFixed(1)+"%";}
+// ----- pulse
+function drawPulse(){let d="M0 58";for(let i=1;i<=60;i++){d+=` L${(i/60*500).toFixed(0)} ${(58-Math.sin(i/8)*12+rnd(-4,4)).toFixed(0)}`;}
+  $("pulseSvg").innerHTML=`<line x1="0" y1="44" x2="500" y2="44" stroke="var(--grid)" stroke-dasharray="4 4"/><path d="${d}" fill="none" stroke="var(--blue)" stroke-width="2"/>`;
+  $("force").textContent=Math.floor(64+Math.random()*16)+"%";}
+// ----- edge
+function drawEdge(){let h="";for(let i=0;i<24;i++){const v=(Math.random())*80+8;h+=`<div class="${i>16?'neg':''}" style="height:${v}px"></div>`;}$("edgeBars").innerHTML=h;}
+drawPins();buildGraph();drawPulse();drawEdge();
+setInterval(()=>{buildGraph();drawPulse();drawEdge();const n=parseInt($("round").textContent.replace(/\D/g,""))||7165;$("round").textContent="Ronda #"+(n+1);},4000);
+</script>
+</body></html>

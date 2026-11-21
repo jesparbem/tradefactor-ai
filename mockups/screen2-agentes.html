@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MOCKUP 2 · War-Room de Agentes</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--mut:#86868b;--line:#e2e2e6;--blue:#0071e3;--up:#2ea043;--down:#e0442e;--amber:#ff9f0a;--violet:#bf5af2}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--ink)}
+.wrap{max-width:1180px;margin:0 auto}
+.top{position:sticky;top:0;background:rgba(255,255,255,.78);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);z-index:5}
+.top .wrap{display:flex;align-items:center;gap:26px;padding:14px 0}
+.brand{font-weight:700;font-size:1.15rem}.brand span{color:var(--blue)}
+.nav{display:flex;gap:4px}.nav a{color:var(--mut);text-decoration:none;font-size:.92rem;padding:7px 14px;border-radius:999px}.nav a.on{background:#e8edf7;color:var(--blue);font-weight:600}
+.spacer{flex:1}
+.user{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0071e3,#34c1ff);color:#fff;display:grid;place-items:center;font-weight:600}
+.head{padding:30px 0 6px}.path{color:var(--mut);font-size:.82rem;margin-bottom:6px}
+h1{font-size:1.6rem;letter-spacing:-.02em;font-weight:700}
+.sub{color:var(--mut);font-size:.9rem;margin-top:6px}
+.agents{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-top:22px}
+.agent{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:14px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.agent .ah{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.ico{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-size:1.15rem;color:#fff}
+.a1{background:linear-gradient(135deg,#0071e3,#34c1ff)}.a2{background:linear-gradient(135deg,#30d158,#a2e86a)}
+.a3{background:linear-gradient(135deg,#bf5af2,#e0a3ff)}.a4{background:linear-gradient(135deg,#ff9f0a,#ffd60a)}
+.a5{background:linear-gradient(135deg,#ff3b30,#ff6961)}.a6{background:linear-gradient(135deg,#5458c3,#3a3d9e)}.a7{background:linear-gradient(135deg,#2c2c2e,#636366)}
+.agent .nm{font-weight:700;font-size:.92rem}
+.role{font-size:.7rem;color:var(--mut)}
+.st{font-size:.66rem;font-weight:700;padding:2px 9px;border-radius:999px;margin-left:auto;font-family:inherit}
+.st.work{background:#ebf5ff;color:#0068c4}.st.deb{background:#fff4e5;color:#b37400}.st.ok{background:#e6f9ee;color:#1f8f4d}.st.no{background:#ffe9e7;color:#d4362b}
+.doing{font-size:.78rem;color:#444;background:#f7f7f9;border-radius:10px;padding:8px 9px;min-height:60px;line-height:1.45}
+.doing b{color:var(--ink)}
+.log{font-size:.7rem;color:var(--mut);margin-top:8px;line-height:1.5;border-top:1px solid var(--line);padding-top:7px}
+.log div:first-child{color:#333}
+/* panel debate */
+.debate{display:grid;grid-template-columns:1.2fr 1.2fr .9fr;gap:14px;margin-top:18px}
+.col{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:16px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.col h2{font-size:.8rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:10px}
+.vs{display:flex;justify-content:space-between;font-size:1.05rem;font-weight:700;margin-bottom:8px}
+.arg{font-size:.82rem;color:#444;margin:6px 0;line-height:1.45}
+.verdict{font-size:.86rem;line-height:1.5}
+.verdict .ttl{font-size:1rem;font-weight:700;margin-bottom:4px}
+.gate{margin-top:12px;background:#f3f6ff;border:1px solid #d3e2ff;border-radius:10px;padding:9px 10px;font-size:.78rem;color:#124a8f}
+.tick{position:sticky;bottom:0;background:#fff;border-top:1px solid var(--line);padding:10px 0;font-size:.78rem;color:#555;overflow:hidden;white-space:nowrap}
+.tick .l{color:var(--blue);font-weight:600}
+.foot{color:var(--mut);font-size:.74rem;text-align:center;margin:18px 0 10px}
+@media(max-width:880px){.agents{grid-template-columns:repeat(2,1fr)}.debate{grid-template-columns:1fr}}
+</style></head><body>
+<div class="top"><div class="wrap">
+  <div class="brand">Factor<span>IA</span> Terminal</div>
+  <nav class="nav"><a>Portafolio</a><a>Mercado</a><a class="on">Agentes</a><a>Simulaciones</a></nav>
+  <div class="spacer"></div><div class="user">W</div>
+</div></div>
+<div class="wrap">
+  <div class="head"><div class="path">Agentes / Guerra de ideas en vivo</div>
+    <h1>La red analizando BTC ahora mismo</h1>
+    <div class="sub">7 agentes trabajando en paralelo: cada uno publica lo que piensa mientras decide si entrar o no. Nada se ejecuta sin pasar por Crítica + Riesgo.</div>
+  </div>
+
+  <div class="agents">
+    <div class="agent"><div class="ah"><div class="ico a1">🔎</div><div><div class="nm">Investigador</div><div class="role">contexto y datos</div></div><span class="st work">Investiga</span></div>
+      <div class="doing"><b>¿Qué está haciendo:</b> mapea ordenes de BTC, volumen y correlacion con NVDA y oro.</div>
+      <div class="log"><div>▪ barrio en 58.2k con volumen x2.3</div><div>▪ correlacion BTC-oro en maximo 90 dias</div><div>▪ sin noticias macro relevantes hoy</div></div></div>
+    <div class="agent"><div class="ah"><div class="ico a2">📊</div><div><div class="nm">Técnico</div><div class="role">momentum / régimen</div></div><span class="st ok">A favor</span></div>
+      <div class="doing"><b>¿Qué está haciendo:</b> cruce de 30/200 alcista, break de resistencia 58.0k con cierre confirmado.</div>
+      <div class="log"><div>▪ momentum 30d +18%</div><div>▪ precio > MA200</div><div>▪ soporte 55.5k aguanta</div></div></div>
+    <div class="agent"><div class="ah"><div class="ico a3">🧠</div><div><div class="nm">Predictor ML</div><div class="role">modelos históricos</div></div><span class="st work">Predice</span></div>
+      <div class="doing"><b>¿Qué está haciendo:</b> backtest de 2.881 velas; combo momentum+régimen fuera de muestra x1.67.</div>
+      <div class="log"><div>▪ prob 60% de continuidad 7d</div><div>▪ escenario base: 64.2k ±4.1k</div><div>▪ drawdown esperado -25%</div></div></div>
+    <div class="agent"><div class="ah"><div class="ico a4">📰</div><div><div class="nm">Noticias</div><div class="role">sentimiento</div></div><span class="st work">Lee</span></div>
+      <div class="doing"><b>¿Qué está haciendo:</b> cruza titulares con el plano del día.</div>
+      <div class="log"><div>▪ 6 titulares, 4 positivos</div><div>▪ ETF flows +310M ayer</div><div>▪ sin FOMC esta semana</div></div></div>
+    <div class="agent"><div class="ah"><div class="ico a5">😈</div><div><div class="nm">Crítico</div><div class="role">abogado del diablo</div></div><span class="st deb">Cuestiona</span></div>
+      <div class="doing"><b>¿Qué está haciendo:</b> busca por qué NO entrar: hay que aguantar un posible rechazo en 59k.</div>
+      <div class="log"><div>▪ RSI semanal sobrecomprado 71</div><div>▪ la ruptura puede ser fake-out</div><div>▪ exige stop en 54.8k</div></div></div>
+    <div class="agent"><div class="ah"><div class="ico a6">🛡️</div><div><div class="nm">Riesgo</div><div class="role">reglas deterministas</div></div><span class="st ok">Aprueba</span></div>
+      <div class="doing"><b>¿Qué está haciendo:</b> valida tamano de posicion vs varianza y drawdown maximo de la cartera.</div>
+      <div class="log"><div>▪ posicion <= 25% del capital</div><div>▪ stop fijo, sin apalancamiento</div><div>▪ riesgo total en verde</div></div></div>
+    <div class="agent"><div class="ah"><div class="ico a7">⚡</div><div><div class="nm">Ejecutor</div><div class="role">modo simulación</div></div><span class="st ok">En cola</span></div>
+      <div class="doing"><b>¿Qué está haciendo:</b> esperando el visto bueno final; operara en PAPEL, sin dinero real.</div>
+      <div class="log"><div>▪ orden simulada lista</div><div>▪ slippage estimado 0.05%</div><div>▪ costes 0.15%/lado</div></div></div>
+  </div>
+
+  <div class="debate">
+    <div class="col"><h2>Alcista (Técnico + Noticias + ML)</h2>
+      <div class="vs"><span class="up">▲ Factores a favor</span></div>
+      <div class="arg">• Cruce de momentum alcista y precio sobre MA200</div>
+      <div class="arg">• Ruptura de 58.0k con volumen alto (x2.3)</div>
+      <div class="arg">• Sentimiento de noticias positivo + flujos de ETF entrando</div>
+    </div>
+    <div class="col"><h2>Bajista (Crítico)</h2>
+      <div class="vs"><span class="down">▼ Factores en contra</span></div>
+      <div class="arg">• RSI semanal sobrecomprado (71): posible retroceso</div>
+      <div class="arg">• La ruptura puede ser un fake-out en zona de resistencia</div>
+      <div class="arg">• Correlacion alta con bolsa: si NVDA corrige, BTC baja</div>
+    </div>
+    <div class="col"><h2>Veredicto de la red</h2>
+      <div class="verdict"><div class="ttl" style="color:var(--up)">Entrar en BTC · pequeño</div>
+      A favor 3 · En contra 1. El Crítico gano el stop y el tamano (25% max). Consenso: posicion moderada, riesgo controlado.
+      </div>
+      <div class="gate">🛡️ Puerta de riesgo: <b>APROBADA</b> · stop 54.8k · sin apalancamiento · sigue en simulacion</div>
+    </div>
+  </div>
+
+  <div class="tick"><span class="l">● EN VIVO</span>&nbsp; Crítico revisando NVDA… &nbsp;·&nbsp; Técnico confirma ruptura de oro&nbsp;·&nbsp; Noticias detecta titular sobre petroleo&nbsp;·&nbsp; Predictor termino 4.112 simulaciones de 100 €…</div>
+  <div class="foot">MOCKUP 2 de 4 · Red de agentes · previsualizacion (datos ilustrativos)</div>
+</div></body></html>

@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pantalla 5 · Alpha en vivo — FactorIA Terminal</title>
+<style>
+:root{--bg:#f5f5f7;--card:#fff;--ink:#1d1d1f;--mut:#86868b;--line:#e2e2e6;--blue:#0071e3;--up:#2ea043;--down:#e0442e;--amber:#ff9f0a;--violet:#bf5af2;--redc:#b07060}
+*{box-sizing:border-box;margin:0;padding:0;font-family:-apple-system,BlinkMacSystemFont,"SF Pro Text","Segoe UI",Roboto,sans-serif}
+body{background:var(--bg);color:var(--ink)}
+.wrap{max-width:1180px;margin:0 auto}
+.top{position:sticky;top:0;background:rgba(255,255,255,.78);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);z-index:5}
+.top .wrap{display:flex;align-items:center;gap:26px;padding:14px 0}
+.brand{font-weight:700;font-size:1.15rem}.brand span{color:var(--blue)}
+.nav{display:flex;gap:4px}.nav a{color:var(--mut);text-decoration:none;font-size:.92rem;padding:7px 14px;border-radius:999px}.nav a.on{background:#e8edf7;color:var(--blue);font-weight:600}
+.spacer{flex:1}.user{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,#0071e3,#34c1ff);color:#fff;display:grid;place-items:center;font-weight:600}
+.head{padding:28px 0 4px}.path{color:var(--mut);font-size:.82rem;margin-bottom:4px}
+h1{font-size:1.5rem;letter-spacing:-.02em;font-weight:700}
+.sub{color:var(--mut);font-size:.88rem;margin:4px 0 16px}
+.banner{background:#eef6ff;border:1px solid #cfe3ff;color:#0057a3;border-radius:12px;padding:9px 14px;font-size:.82rem;margin-bottom:16px}
+.banner b{font-weight:600}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;box-shadow:0 2px 10px rgba(0,0,0,.05)}
+.card.wide{grid-column:1/-1}
+.card h2{font-size:.78rem;color:var(--mut);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline}
+.card h2 .r{font-size:.72rem;color:var(--blue);text-transform:none;letter-spacing:0;font-weight:600}
+.card h2 .live{color:var(--up);font-weight:700}
+.statline{display:flex;gap:14px;flex-wrap:wrap;margin:8px 0 6px;font-size:.8rem;color:#515154}
+.statline b{color:var(--ink)}
+.big{font-size:2.2rem;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;font-family:-apple-system,"SF Pro Display",system-ui,sans-serif}
+/* galton */
+.pins{position:relative;height:180px;margin-top:6px}
+.pins svg{width:100%;height:100%;display:block}
+.balls{position:absolute;inset:0;overflow:hidden}
+.ball{position:absolute;width:9px;height:9px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#9fd6b2,#1f9d4d)}
+.gate-txt{display:flex;justify-content:space-between;font-size:.7rem;color:var(--mut);margin-top:2px}
+.pill{display:inline-block;font-size:.66rem;font-weight:700;padding:2px 9px;border-radius:999px}
+.p-ok{background:#e6f9ee;color:#1f8f4d}.p-up{background:#ebf5ff;color:#0068c4}.p-am{background:#fff4e5;color:#b37400}
+/* grafo */
+.graph{position:relative;height:190px;margin-top:6px;background:radial-gradient(120px 90px at 50% 45%,#f0f6ff 0%,transparent 70%)}
+.graph svg{width:100%;height:100%}
+.legend{display:flex;gap:12px;flex-wrap:wrap;font-size:.7rem;color:var(--mut);margin-top:4px}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:4px;vertical-align:-1px}
+/* pulse */
+.pulse{position:relative;height:120px;margin-top:6px}
+.pulse svg{width:100%;height:100%}
+.pcount{font-size:.82rem;color:var(--up);font-weight:700}
+/* edge */
+.edge-bars{display:flex;align-items:flex-end;gap:2px;height:90px;margin-top:8px}
+.edge-bars div{flex:1;border-radius:2px 2px 0 0;background:linear-gradient(#6090d0,#a8c4ea)}
+.edge-bars div.neg{background:linear-gradient(#b07060,#e2b7a8)}
+.agent-strip{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.ag{font-size:.72rem;border:1px solid var(--line);border-radius:999px;padding:5px 11px;background:#fafafc;color:#515154}
+.ag b{color:var(--ink)}
+.ag.on{background:#ebf5ff;border-color:#b9d7ff;color:#004f9e}
+.foot{color:var(--mut);font-size:.74rem;text-align:center;margin:18px 0 12px}
+@media(max-width:860px){.grid{grid-template-columns:1fr}}
+</style></head><body>
+<div class="top"><div class="wrap">
+  <div class="brand">Factor<span>IA</span> Terminal</div>
+  <nav class="nav"><a>Portafolio</a><a>Mercado</a><a>Agentes</a><a>Simulaciones</a><a class="on">Alpha en vivo</a></nav>
+  <div class="spacer"></div><div class="user">W</div>
+</div></div>
+<div class="wrap">
+  <div class="head">
+    <div class="path">Alpha en vivo / Escenarios de futuro</div>
+    <h1>La red piensa el camino del dinero</h1>
+    <div class="sub">Máquina de probabilidad, grafo de escenarios, pulso del precio y distribución de la ventaja — todo con datos del simulador en tiempo real. Mueve el cursor o espera: las bolas caen y el grafo converge.</div>
+  </div>
+
+  <div class="banner">⚡ <b>Simulando ahora:</b> BTC 58.324 $ · los 8 agentes convergen hacia <b>PREDICTED: UP</b> · EV estimado +845 €/operación · confianza de la red 91,4%</div>
+
+  <div class="grid">
+    <div class="card">
+      <h2>Probability Lattice <span class="r">36.402 operaciones · un solo tablero</span></h2>
+      <div class="statline"><span><b>8</b> compuertas</span><span>Bias <b>+6,5</b></span><span>Caídas <b id="balls">0</b></span><span class="live" id="landed">Acierto −%</span></div>
+      <div class="pins">
+        <svg id="pinsSvg" viewBox="0 0 500 150"></svg>
+        <div class="balls" id="ballsLayer"></div>
+      </div>
+      <div class="gate-txt"><span>0</span><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>6</span><span>7</span><span>8</span></div>
+      <div class="statline"><span>EV/operación <b class="up">+845 €</b></span><span>P&L sesión <b class="up">+3.342 €</b></span><span>All-time <b class="up">+438.086 €</b></span></div>
+    </div>
+
+    <div class="card">
+      <h2>Mirofish · grafo de escenarios <span class="r live">⚡ PREDICTED: UP</span></h2>
+      <div class="statline"><span>Nodos <b>66</b></span><span>Rutas <b>433</b></span><span>Señal <b id="sig">98,6</b>%</span><span>Iteración <b id="iter">3.289</b></span></div>
+      <div class="graph" id="graph"><svg id="graphSvg"></svg></div>
+      <div class="legend">
+        <span><i style="background:#2ea043"></i>bull</span><span><i style="background:#e0442e"></i>bear</span>
+        <span><i style="background:#0071e3"></i>mediana</span><span><i style="background:#bf5af2"></i>catalizador</span>
+        <span>Confianza <b id="conf">91,4</b>%</span><span class="up">Rutas bull <b>4.621</b></span><span class="down">Rutas bear <b>482</b></span>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>BTC Hourly Pulse <span class="r" id="round">Ronda #7165</span></h2>
+      <div class="statline"><span>Precio <b>58.324,00 $</b></span><span>Objetivo <b>58.400,00 $</b></span><span class="live">Fuerza <b id="force">67</b>%</span></div>
+      <div class="pulse"><svg id="pulseSvg" viewBox="0 0 500 110"></svg></div>
+      <div class="statline"><span>Latencia <b id="lat">−41,8 ms</b></span><span>Restante <b id="cd">00:00 / 03:34</b></span></div>
+    </div>
+
+    <div class="card">
+      <h2>Edge Distribution 24H <span class="r">ventaja por dirección</span></h2>
+      <div class="edge-bars" id="edgeBars"></div>
+      <div class="statline"><span>Ventaja media <b class="up">+2,4%</b></span><span>Cola derecha <b>65%</b></span><span class="down">Riesgo de cola 4%</span></div>
+    </div>
+
+    <div class="card wide">
+      <h2>Pensando ahora <span class="r live">● en vivo</span></h2>
+      <div class="agent-strip" id="strip">
+        <span class="ag on"><b>🔎 Investigador</b> · volumen x2,3</span>
+        <span class="ag on"><b>📊 Técnico</b> · break 58.0k</span>
+        <span class="ag on"><b>🧠 Predictor ML</b> · 60% cont. 7d</span>
+        <span class="ag"><b>📰 Noticias</b> · flujos ETF +310M</span>
+        <span class="ag"><b>😈 Examinador</b> · stop 54.8k?</span>
+        <span class="ag"><b>🛡️ Riesgo</b> · posición ≤25%</span>
+        <span class="ag on"><b>⚡ Ejecutor</b> · esperando OK</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="foot">Pantalla 5 · Alpha en vivo (mockup interactivo con datos de demostración del simulador homólogo) · no es asesoramiento financiero</div>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const rnd=(a,b)=>a+Math.random()*(b-a);
+// --- Galton board: 8 gates, bias +6.5 →
+function drawPins(){
+  const s=$("pinsSvg");let h="";
+  const pins=[[50],[100],[150],[200],[250],[300],[350],[400],[450]];
+  const y0=14, dy=20;
+  for(let row=0;row<5;row++){
+    const x=pins[row], y=y0+row*dy;
+    x.forEach(px=>{h+=`<circle cx="${px}" cy="${y}" r="2.6" fill="#cfd6e0"/>`;});
+  }
+  // compuertas deflectoras (bias)
+  h+=`<rect x="210" y="96" width="80" height="4" fill="#b8c0cc" rx="2"/>`;
+  h+=`<rect x="258" y="104" width="90" height="4" fill="#b8c0cc" rx="2"/>`;
+  s.innerHTML=h;
+}
+const gates=8, catchers=Array(gates+1).fill(0), trails=[];
+function dropBall(){
+  let idx=gates/2;
+  // bias +6.5 -> empuja a la derecha
+  for(let i=0;i<gates;i++){ const r=Math.random(); idx += (r < 0.5+0.06 ? 0.5 : -0.5); }
+  idx=Math.max(0,Math.min(gates,Math.round(idx)));
+  catchers[idx]++;
+  const b=document.createElement("div"); b.className="ball";
+  b.style.left=(idx/gates*100)+"%"; b.style.top=0;
+  $("ballsLayer").appendChild(b);
+  // animar caida con la posicion objetivo en Y
+  let y=0; const anim=setInterval(()=>{ y+=6; b.style.top=Math.min(y,150)+"px"; if(y>=150){clearInterval(anim);} }, 14);
+  // limpiar capa de vez en cuando
+  if($("ballsLayer").children.length>300){$("ballsLayer").innerHTML="";}
+  const total=catchers.reduce((a,b)=>a+b,0);
+  const g=catchers[6]+catchers[7]+catchers[8];
+  $("balls").textContent=total;
+  $("landed").textContent="Acierto "+(g/total*100).toFixed(1)+"% (verde)";
+}
+// --- Mirofish graph: nodos bull/bear orbitando, convergen
+const N=66; const nodes=[];
+function buildGraph(){
+  const s=$("graphSvg"); let h="";
+  const cx=250, cy=95, R=70;
+  const types=["bull","bear","med"]; 
+  for(let i=0;i<N;i++){
+    const a=(i/N)*Math.PI*2 + rnd(-.2,.2);
+    const r=R+rnd(-20,20);
+    const t=(Math.random()<0.55)?"bull":(Math.random()<0.5?"bear":"med");
+    nodes.push({x:cx+Math.cos(a)*r, y:cy+Math.sin(a)*r, t});
+  }
+  // aristas
+  let edges=0;
+  for(let i=0;i<N;i++){ for(let j=i+1;j<N;j++){ if(Math.random()<0.03){edges++; h+=`<line x1="${nodes[i].x}" y1="${nodes[i].y}" x2="${nodes[j].x}" y2="${nodes[j].y}" stroke="#e3e9f2" stroke-width=".8"/>`;}}}
+  nodes.forEach(n=>{const col=n.t==="bull"?"#2ea043":n.t==="bear"?"#e0442e":"#0071e3"; h+=`<circle cx="${n.x}" cy="${n.y}" r="${rnd(3,6.5)}" fill="${col}" opacity=".85"/>`;});
+  s.innerHTML=h;
+  $("iter").textContent=3289+Math.floor(Math.random()*200);
+  $("sig").textContent=(98.0+Math.random()*1.3).toFixed(1);
+}
+// --- pulse price line
+function drawPulse(){
+  const s=$("pulseSvg"); let d="M0 70";
+  const pts=60;
+  for(let i=1;i<=pts;i++){ const v=70 - Math.sin(i/8)*14 + rnd(-4,4); d+=` L${(i/pts*500).toFixed(0)} ${v.toFixed(0)}`; }
+  s.innerHTML=`<path d="${d}" fill="none" stroke="#0071e3" stroke-width="2"/>`+
+    `<line x1="0" y1="52" x2="500" y2="52" stroke="#dbe3ee" stroke-dasharray="4 4"/>`+
+    `<text x="6" y="48" fill="#b0b0b5" font-size="9">objetivo 58.400</text>`;
+}
+// --- edge distribution
+function drawEdge(){
+  const b=$("edgeBars"); let h="";
+  for(let i=0;i<24;i++){ const v=(Math.random())*(i%2?40:85)+8; const neg=i>16; h+=`<div class="${neg?'neg':''}" style="height:${v}px"></div>`;}
+  b.innerHTML=h;
+}
+// --- tickers strip cycle + live counters
+setInterval(()=>{ 
+  $("force").textContent=Math.floor(65+Math.random()*15)+"%";
+  $("lat").textContent=(rnd(-60,-25)).toFixed(1)+" ms";
+  const min=Math.floor(Math.random()*4), sec=Math.floor(Math.random()*60);
+  $("cd").textContent=`00:${String(min).padStart(2,"0")} / ${String(sec).padStart(2,"0")}`;
+  const rno=parseInt($("round").textContent.replace(/\D/g,""))||7165; $("round").textContent="Ronda #"+(rno+ (Math.random()<0.15?1:0));
+}, 1500);
+setInterval(()=>{ const c=parseFloat($("conf").textContent); $("conf").textContent=(c+ rnd(-.6,.6)).toFixed(1); }, 1800);
+drawPins(); buildGraph(); drawPulse(); drawEdge();
+setInterval(dropBall, 300);
+</script>
+</body></html>
