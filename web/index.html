@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simulador de Inversiones · 100 €</title>
+<style>
+  :root{--bg:#0b0f17;--panel:#121a2b;--line:#223047;--txt:#e6ebf4;--mut:#8f9bb0;
+        --acc:#22d3ee;--green:#34d399;--red:#f87171;--amber:#fbbf24;--violet:#7c5cff}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{background:radial-gradient(1100px 550px at 85% -10%, #14203f 0%, transparent 55%),var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,sans-serif;padding:22px;min-height:100vh}
+  .wrap{max-width:1060px;margin:0 auto}
+  h1{font-size:1.45rem;margin-bottom:4px}
+  h1 span{background:linear-gradient(90deg,var(--acc),var(--green));-webkit-background-clip:text;background-clip:text;color:transparent}
+  .sub{color:var(--mut);font-size:.88rem;margin-bottom:18px}
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px}
+  .card h2{font-size:1rem;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+  .card h2 .tag{font-size:.65rem;background:rgba(124,92,255,.2);color:var(--violet);border:1px solid rgba(124,92,255,.4);padding:2px 8px;border-radius:999px}
+  .row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px;align-items:flex-end}
+  .field{display:flex;flex-direction:column;gap:4px;font-size:.75rem;color:var(--mut)}
+  .field label{text-transform:uppercase;letter-spacing:.04em}
+  input,select{background:#0d1524;border:1px solid var(--line);color:var(--txt);border-radius:9px;padding:8px 10px;font-size:.9rem}
+  input:focus,select:focus{outline:none;border-color:var(--acc)}
+  .btn{border:none;border-radius:10px;padding:10px 16px;font-weight:600;font-size:.9rem;cursor:pointer}
+  .btn-p{background:linear-gradient(135deg,var(--acc),#0891b2);color:#04142a}
+  .btn-g{background:linear-gradient(135deg,var(--violet),#4f46e5);color:#fff}
+  .btn:hover{filter:brightness(1.12)}
+  .param-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+  .note{font-size:.76rem;color:var(--mut);line-height:1.5}
+  .metrics{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px;margin-top:12px}
+  .metric{background:#0d1524;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+  .metric .k{font-size:.66rem;color:var(--mut);text-transform:uppercase;letter-spacing:.04em}
+  .metric .v{font-size:1.15rem;font-weight:700;font-variant-numeric:tabular-nums}
+  .up{color:var(--green)}.down{color:var(--red)}
+  table{width:100%;border-collapse:collapse;margin-top:8px}
+  th,td{padding:8px 9px;text-align:left;border-bottom:1px solid var(--line);font-size:.8rem}
+  th{color:var(--mut);text-transform:uppercase;font-size:.66rem;letter-spacing:.04em}
+  td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+  .best{background:rgba(52,211,153,.12)}
+  .svgbox{width:100%;height:220px}
+  .spinner{display:none;text-align:center;padding:18px;color:var(--mut)}
+  .spinner.show{display:block}
+  .live{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}
+  .live .chip{background:var(--panel);border:1px solid var(--line);padding:8px 12px;border-radius:999px;font-size:.8rem}
+  .live b{color:var(--acc)}
+  .footer{color:var(--mut);font-size:.74rem;margin-top:18px;line-height:1.6;border-top:1px solid var(--line);padding-top:12px}
+  .banner{background:rgba(251,191,36,.1);border:1px solid rgba(251,191,36,.35);border-radius:10px;padding:10px 12px;font-size:.8rem;margin-bottom:14px;line-height:1.5}
+  @media(max-width:760px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1><span>Simulador de Inversiones</span> · empiezas con 100 €</h1>
+  <div class="sub">Datos reales de Binance (BTC/ETH, diario 2019→hoy), costes reales (0,15% por operación), y optimización <b>genética</b> con disciplina fuera de muestra para que no te engañe el sobreajuste.</div>
+
+  <div class="live" id="live">
+    <span class="chip">Cargando datos…</span>
+  </div>
+
+  <div class="banner" id="honest">
+    ⚠️ <b>Regla de oro:</b> los resultados que se ven en el <b>fuera de muestra</b> (2024→hoy) son los que importan. Los del entrenamiento (2019-2023) están <i>elegidos</i> por el algoritmo genético: casi siempre se ven mejor de lo que luego hacen. Nunca decidas con los números de entrenamiento.
+  </div>
+
+  <div class="grid">
+    <!-- Col 1: escenario -->
+    <div class="card">
+      <h2>🎯 Simular un escenario <span class="tag">modo manual</span></h2>
+      <div>
+        <div class="row">
+          <div class="field"><label>Activo</label>
+            <select id="asset"><option>BTC</option><option>ETH</option></select></div>
+          <div class="field"><label>Capital inicial (€)</label>
+            <input id="cap" type="number" value="100" min="1" step="10" /></div>
+          <div class="field"><label>Periodo</label>
+            <select id="split">
+              <option value="test">Fuera de muestra (2024→hoy)</option>
+              <option value="train">Entrenamiento (2019-2023)</option>
+              <option value="full">Todo el histórico</option>
+            </select></div>
+        </div>
+        <div class="field"><label>Estrategia</label>
+          <select id="strat" onchange="stratChanged()">
+            <option value="momentum_regime">Momentum + filtro de régimen</option>
+            <option value="ma_cross">Cruce de medias móviles</option>
+            <option value="momentum_vol">Momentum + objetivo de volatilidad</option>
+            <option value="buyandhold">Comprar y mantener (benchmark)</option>
+          </select></div>
+        <div class="param-grid" id="params"></div>
+        <div style="margin-top:12px"><button class="btn btn-p" onclick="simulate()">▶ Simular escenario</button></div>
+      </div>
+      <div class="spinner" id="simSpinner">Calculando…</div>
+      <div id="simOut"></div>
+    </div>
+
+    <!-- Col 2: genetico -->
+    <div class="card">
+      <h2>🧬 Optimización genética <span class="tag">muchos escenarios a la vez</span></h2>
+      <div class="row">
+        <div class="field"><label>Generaciones</label><input id="gens" type="number" value="12" min="3" max="40" /></div>
+        <div class="field"><label>Población</label><input id="pops" type="number" value="30" min="10" max="80" /></div>
+      </div>
+      <div class="note">Evoluciona estrategias y parámetros sobre entrenamiento, y luego mide <b>sin tocar</b> los mejores en fuera de muestra. Te aviso: buscar con genética (y datos diarios) en ~2 años de datos casi siempre <b>sobreajusta</b> — por eso te enseño el fuera de muestra en grande.</div>
+      <div style="margin-top:12px"><button class="btn btn-g" onclick="ga()">🧬 Optimizar y aconsejar</button></div>
+      <div class="spinner" id="gaSpinner">Evolucionando poblaciones… (varias generaciones)</div>
+      <div id="gaOut"></div>
+    </div>
+  </div>
+
+  <div class="card" style="margin-top:16px">
+    <h2>🌐 Cartera multi-activo <span class="tag">7 mercados a la vez</span></h2>
+    <div class="note">Simula un portafolio de <b>BTC, ETH, NVDA, SPY, AAPL, Oro y EUR/USD</b> con rebalanceo mensual y costes reales por mercado. Compara 3 perfiles frente al benchmark en el tramo que importa (2024→hoy, rebasado a 100 €).</div>
+    <div style="margin-top:12px"><button class="btn btn-p" onclick="portfolio()">▶ Simular cartera multi-activo</button></div>
+    <div class="spinner" id="poSpinner">Calculando cartera…</div>
+    <div class="svgbox" id="svgOutC"></div>
+    <div id="poOut"></div>
+  </div>
+
+  <div class="footer">
+    Métricas: múltiplo sobre 100 € · CAGR anual · Sharpe (rentabilidad ajustada a riesgo) · máximo drawdown · tiempo en mercado.
+    <br/>Los datos se actualizan desde Binance (cierre diario). Los parámetros ganadores aquí son <b>posibles sobreajustes</b>: ningún escenario presente garantiza rentabilidad futura, y el objetivo de "x10 en una semana" no ha ocurrido ni una vez en BTC/ETH desde 2019.
+  </div>
+</div>
+
+<script>
+"use strict";
+const $=id=>document.getElementById(id);
+const DEFAULTS={momentum_regime:{mom_n:30,ma_n:200},ma_cross:{fast:20,slow:50},
+                 momentum_vol:{mom_n:21,vol_n:21,target_vol:0.015}};
+const EUR=n=>(n<0?"−":"")+(n<1?n.toFixed(3)+" €":n.toFixed(1)+" €");
+const xfmt=n=>"x"+n.toFixed(2);
+const pct=n=>(n*100).toFixed(1)+"%";
+
+function stratChanged(){
+  const s=$("strat").value, box=$("params");
+  box.innerHTML="";
+  const d=DEFAULTS[s];
+  if(!d)return;
+  for(const[k,v]of Object.entries(d)){
+    const f=document.createElement("div");f.className="field";
+    const step=k==="target_vol"?0.001:1;
+    const stepAttr=k==="target_vol"?'step="0.001"':"";
+    f.innerHTML=`<label>${k}</label><input id="p_${k}" type="number" value="${v}" step="${step}">`;
+    box.appendChild(f);
+  }
+}
+function readParams(){
+  const s=$("strat").value, d=DEFAULTS[s];
+  if(!d)return{};
+  const o={};
+  for(const k of Object.keys(d))o[k]=parseFloat($("p_"+k).value);
+  return o;
+}
+async function post(path,body){
+  const r=await fetch(path,{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(body)});
+  return r.json();
+}
+
+// ---------- grafico SVG ----------
+function drawSVG(id, curves, xlabel){
+  const W=1040,H=250,padL=52,padR=12,padT=14,padB=26;
+  const iw=W-padL-padR, ih=H-padT-padB;
+  let tmin=0,tmax=0,vmin=Infinity,vmax=-Infinity;
+  curves.forEach(c=>{c.p.forEach((p,i)=>{if(!i)return; if(i>tmax)tmax=i; vmin=Math.min(vmin,p.eq);vmax=Math.max(vmax,p.eq);});});
+  if(vmin===vmax){vmin-=1;vmax+=1;} const vpad=(vmax-vmin)*0.08; vmin-=vpad;vmax+=vpad;
+  let s=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:100%;display:block" role="img">`;
+  s+=gridLines();
+  const colors={BTC:"#22d3ee",ETH:"#7c5cff",train:"#8f9bb0",test:"#34d399",gen:"#fbbf24",def:"#ff9f0a",agg:"#0071e3"};
+  const labels=["100 €","200 €","400 €","800 €","1.6k","3.2k","6.4k","12.8k","25.6k"][0]; 
+  // ejes
+  s+=`<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H-padB}" stroke="#2a3a55"/>`;
+  s+=`<line x1="${padL}" y1="${H-padB}" x2="${W-padR}" y2="${H-padB}" stroke="#2a3a55"/>`;
+  curves.forEach((c,ci)=>{
+    const col=colors[c.c]||"#0071e3";
+    let d="";
+    c.p.forEach((p,i)=>{ if(!i)return; const x=padL+iw*(i/tmax), y=padT+ih*(1-(p.eq-vmin)/(vmax-vmin));
+      d+=(d?"L":"M")+x.toFixed(1)+","+y.toFixed(1); });
+    s+=`<path d="${d}" fill="none" stroke="${col}" stroke-width="2" opacity="${ci?"0.85":"1"}"/>`;
+    // etiqueta final
+    const lp=c.p[c.p.length-1], xs=padL+iw, ys=padT+ih*(1-(lp.eq-vmin)/(vmax-vmin));
+    s+=`<text x="${xs-6}" y="${ys-4}" fill="${col}" font-size="11" text-anchor="end">${c.label} ${xfmt(lp.eq)}</text>`;
+  });
+  s+=`<text x="${padL}" y="${H-padB+15}" fill="#5b6b84" font-size="10">${xlabel||"2019 ─────────────────── 2023 (split) ─────────────────── hoy"}</text>`;
+  s+=`</svg>`;
+  $("svgOut"+(id||"")).innerHTML=s;
+}
+function gridLines(){return "";}
+
+// ---------- escenario ----------
+async function simulate(){
+  $("simSpinner").classList.add("show");$("simOut").innerHTML="";
+  const b={asset:$("asset").value,capital:parseFloat($("cap").value)||100,split:$("split").value,
+           strategy:$("strat").value,params:readParams()};
+  const r=await post("api/simulate",b);
+  $("simSpinner").classList.remove("show");
+  if(r.error){$("simOut").innerHTML=`<div class="note">❌ ${r.error}</div>`;return;}
+  const m=r.sim;
+  const col=m.final>=m.start_cash?"up":"down";
+  $("simOut").innerHTML=`
+    <div class="svgbox" id="svgOut1"></div>
+    <div class="metrics">
+      <div class="metric"><div class="k">Capital final</div><div class="v ${col}">${EUR(m.final)}</div></div>
+      <div class="metric"><div class="k">Múltiplo</div><div class="v ${col}">${xfmt(m.multiple)}</div></div>
+      <div class="metric"><div class="k">CAGR anual</div><div class="v">${pct(m.cagr)}</div></div>
+      <div class="metric"><div class="k">Sharpe</div><div class="v">${m.sharpe}</div></div>
+      <div class="metric"><div class="k">Max drawdown</div><div class="v down">${pct(m.maxdd)}</div></div>
+      <div class="metric"><div class="k">Tiempo en mercado</div><div class="v">${pct(m.time_in_market)}</div></div>
+    </div>`;
+  const curve=m.curve;
+  const label=`${$("asset").value} · ${($("strat").value==="buyandhold")?"Buy & Hold":r.strategy}`;
+  drawSVG("1",[{label:label,c:r.asset||"test",p:curve}]);
+}
+
+// ---------- genetico ----------
+async function ga(){
+  $("gaSpinner").classList.add("show");$("gaOut").innerHTML="";
+  const b={asset:$("asset").value,capital:parseFloat($("cap").value)||100,
+           population:parseInt($("pops").value)||30,generations:parseInt($("gens").value)||12};
+  const r=await post("api/genetic",b);
+  $("gaSpinner").classList.remove("show");
+  if(r.error){$("gaOut").innerHTML=`<div class="note">❌ ${r.error}</div>`;return;}
+  // tabla
+  let rows=`<table><thead><tr><th>#</th><th>Estrategia</th><th>Parámetros</th>
+    <th class="num">Train x</th><th class="num">Train Sharpe</th>
+    <th class="num">Test x</th><th class="num">Test Sharpe</th><th class="num">Test DD</th></tr></thead><tbody>`;
+  const top=r.top.slice().sort((a,b)=>b.test.sharpe-a.test.sharpe);
+  top.forEach((t,i)=>{
+    rows+=`<tr class="${i===0?'best':''}"><td>${i+1}</td><td>${t.strategy_name}</td>
+      <td style="color:#8f9bb0">${JSON.stringify(t.params)}</td>
+      <td class="num">${xfmt(t.train.multiple)}</td><td class="num">${t.train.sharpe}</td>
+      <td class="num ${t.test.multiple>=1?'up':'down'}">${xfmt(t.test.multiple)}</td>
+      <td class="num">${t.test.sharpe}</td><td class="num down">${pct(t.test.maxdd)}</td></tr>`;
+  });
+  rows+=`<tr><td>—</td><td><b>Comprar y mantener</b> (benchmark)</td><td>—</td>
+    <td class="num">${xfmt(r.benchmark.train.multiple)}</td><td class="num">${r.benchmark.train.sharpe}</td>
+    <td class="num ${r.benchmark.test.multiple>=1?'up':'down'}">${xfmt(r.benchmark.test.multiple)}</td>
+    <td class="num">${r.benchmark.test.sharpe}</td><td class="num down">${pct(r.benchmark.test.maxdd)}</td></tr>`;
+  rows+=`</tbody></table>`;
+  // consejo
+  const best=top[0], be=r.benchmark.test;
+  const beats=best.test.multiple>be.multiple;
+  let rec=`<div style="margin-top:12px" class="banner">
+    <b>Consejo honesto (fuera de muestra):</b> la mejor detectada por genética es <b>${best.strategy_name}</b> → 
+    ${xfmt(best.test.multiple)} (Sharpe ${best.test.sharpe}, DD ${pct(best.test.maxdd)}) frente a comprar-y-mantener ${xfmt(be.multiple)}.
+    ${beats?'Estrategia <b>supera</b> al benchmark con menos riesgo — es la candidata más razonable, pero SON DATOS DIARIOS Y POCOS AÑOS: trátala como hipótesis, no como certeza.':'En este tramo <b>no supera</b> al benchmark — la genética encontró buena solución dentro de muestra (Train x alto), pero fuera de muestra hiciera falta más historia. Conclusión: con estos datos, comprar y mantener siguió siendo más robusto.'}
+    <br/><span style="opacity:.7">Búsqueda en ${r.elapsed_ms} ms · evolución: ${r.generations.map(g=>`g${g.gen}:${g.best}`).join(", ")}</span>
+  </div>`;
+  $("gaOut").innerHTML=`<div class="svgbox" id="svgOutG"></div>`+rec+rows;
+  drawSVG("G",[
+    {label:"Mejor (genética)",c:"gen",p:best.test.curve},
+    {label:"Buy & Hold",c:"test",p:r.benchmark.test.curve}
+  ]);
+}
+
+// ---------- cartera multi-activo ----------
+async function portfolio(){
+  $("poSpinner").classList.add("show");$("poOut").innerHTML="";
+  const cap=parseFloat($("cap").value)||100;
+  const r=await post("api/portfolio",{capital:cap});
+  $("poSpinner").classList.remove("show");
+  if(r.error){$("poOut").innerHTML=`<div class="note">❌ ${r.error}</div>`;return;}
+  const t=r.test;
+  drawSVG("C",[
+    {label:t.bench.name,c:"test",p:t.bench.curve},
+    {label:t.agg.name,c:"agg",p:t.agg.curve},
+    {label:t.def.name,c:"def",p:t.def.curve}
+  ],"2024 ──────────────── (fuera de muestra) ────────────────── hoy");
+  const row=(k)=>{const v=t[k];
+    return `<tr><td>${v.name}</td><td class="num">${v.final} €</td><td class="num ${v.multiple>=1?'up':'down'}">${xfmt(v.multiple)}</td>
+      <td class="num">${v.sharpe}</td><td class="num down">${pct(v.maxdd)}</td></tr>`;};
+  $("poOut").innerHTML=`
+    <table><thead><tr><th>Perfil</th><th class="num">100 € →</th><th class="num">Múltiplo</th>
+      <th class="num">Sharpe</th><th class="num">Max DD</th></tr></thead><tbody>
+      ${row("bench")}${row("agg")}${row("def")}</tbody></table>
+    <div class="note" style="margin-top:10px">Fuera de muestra (2024→hoy) · 7 activos · costes reales · rebalanceo mensual · ${r.elapsed_ms} ms</div>`;
+}
+
+// ---------- live ----------
+async function live(){
+  const r=await (await fetch("api/live")).json();
+  if(!r||!r.assets){return;}
+  let html="";
+  for(const[sym,av]of Object.entries(r.assets)){
+    html+=`<span class="chip">${sym} · cierre <b>${av.last_close.toLocaleString("es-ES",{maximumFractionDigits:2})} $</b> (${av.last_date}) · ${av.bars} velas</span>`;
+  }
+  html+=`<button class="btn btn" style="background:var(--panel);border:1px solid var(--line)" onclick="refresh()">↻ Actualizar datos desde Binance</button>`;
+  $("live").innerHTML=html;
+}
+async function refresh(){
+  const r=await post("api/refresh",{});
+  alert(r.ok?"Datos actualizados a Binance ✅":"Error: "+(r.error||""));
+  live();
+}
+stratChanged();live();
+</script>
+</body>
+</html>
