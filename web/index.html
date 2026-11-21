@@ -241,7 +241,7 @@ async function portfolio(){$("spP").classList.add("show");$("outP").innerHTML=""
   if(r.error){$("outP").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
   drawSVG("P",[{label:"Benchmark",c:"bench",p:r.test.bench.curve},{label:"Agresiva",c:"agg",p:r.test.agg.curve},{label:"Defensiva",c:"def",p:r.test.def.curve}],"2024 → (fuera de muestra) → hoy");
   const gv=r.test.def.final, g=n=>"+"+((gv-100)*n).toFixed(1)+" €";
-  $("#ganado").innerHTML=`💰 <b>Ganado</b> (fuera de muestra, perfil Defensiva): <span class="up">${gv} € (+${(gv-100).toFixed(1)} €, +${(gv/100-1)*100>.01?(gv/100-1)*100:0}%)</span> · Agresiva ${r.test.agg.final} € · Benchmark ${r.test.bench.final} €`;
+  $("ganado").innerHTML=`💰 <b>Ganado</b> (fuera de muestra, perfil Defensiva): <span class="up">${gv} € (+${(gv-100).toFixed(1)} €, +${(gv/100-1)*100>.01?(gv/100-1)*100:0}%)</span> · Agresiva ${r.test.agg.final} € · Benchmark ${r.test.bench.final} €`;
   const row=k=>{const v=r.test[k];return `<tr><td>${v.name}</td><td class="num">${v.final} €</td><td class="num ${v.multiple>=1?'up':'down'}">${xfmt(v.multiple)}</td><td class="num">${v.sharpe}</td><td class="num down">${pct(v.maxdd)}</td></tr>`;};
   $("outP").innerHTML=`<table><thead><tr><th>Perfil</th><th class="num">100 € →</th><th class="num">Múltiplo</th><th class="num">Sharpe</th><th class="num">Max DD</th></tr></thead><tbody>${row("bench")}${row("agg")}${row("def")}</tbody></table>
   <div class="sub" style="margin-top:8px">7 activos · costes reales · rebalanceo mensual · ${r.to} · ${r.elapsed_ms} ms</div>`;}
