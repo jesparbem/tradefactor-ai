@@ -95,6 +95,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <div class="path">Portafolio · resumen</div>
   <h1>El dinero del proyecto en un vistazo</h1>
   <div class="sub">Cripto en tiempo real (Binance) · bolsa/materias/divisas con retraso ≈15 min · cartera multi-activo con costes reales y rebalanceo mensual.</div>
+  <div class="banner" id="ganado" style="font-size:.98rem">💰 Ganado acumulado (fuera de muestra): pulsa "Simular cartera".</div>
   <div class="card wide">
     <h2>Cartera multi-activo · 7 mercados · rebasada a 100 € (fuera de muestra)</h2>
     <button class="btn btn-p" onclick="portfolio()">▶ Simular cartera (100 €)</button>
@@ -157,6 +158,12 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
       <div class="edge" id="vedge"></div>
       <div class="vstat"><span style="color:var(--up)">Ventaja media +2,4%</span></div></div>
   </div>
+  <div class="card wide" style="margin-bottom:16px">
+    <h2>🧿 Constelación 3D · los 8 agentes trabajando <span style="color:var(--mut)">(arrastra y clic para ver quién piensa)</span></h2>
+    <div style="height:340px;position:relative" id="c3dbox"><div id="c3d"></div>
+      <div style="position:absolute;top:8px;right:14px;font-size:.72rem;color:var(--mut);text-align:right" id="c3dinfo">Haz clic en un agente.</div></div>
+    <div class="vstat" style="margin-top:6px" id="c3dlegend"></div>
+  </div>
   <div class="grid">
     <div class="card"><h2>Mirofish · escenarios de futuro</h2>
       <button class="btn btn-g" onclick="mirofish()">🧠 Generar escenarios (100 €)</button>
@@ -178,6 +185,7 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 <div class="foot">FactorIA Terminal · motor real con datos 2019→hoy y costes por mercado · Acceso admin/Admin1973. · No es asesoramiento financiero: los resultados fuera de muestra son los que valen, y el "x10 en una semana" no ha ocurrido nunca en BTC/ETH.</div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script>
 "use strict";
 const $=id=>document.getElementById(id);
@@ -232,6 +240,8 @@ async function portfolio(){$("spP").classList.add("show");$("outP").innerHTML=""
   const r=await post("api/portfolio",{capital:100});$("spP").classList.remove("show");
   if(r.error){$("outP").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
   drawSVG("P",[{label:"Benchmark",c:"bench",p:r.test.bench.curve},{label:"Agresiva",c:"agg",p:r.test.agg.curve},{label:"Defensiva",c:"def",p:r.test.def.curve}],"2024 → (fuera de muestra) → hoy");
+  const gv=r.test.def.final, g=n=>"+"+((gv-100)*n).toFixed(1)+" €";
+  $("#ganado").innerHTML=`💰 <b>Ganado</b> (fuera de muestra, perfil Defensiva): <span class="up">${gv} € (+${(gv-100).toFixed(1)} €, +${(gv/100-1)*100>.01?(gv/100-1)*100:0}%)</span> · Agresiva ${r.test.agg.final} € · Benchmark ${r.test.bench.final} €`;
   const row=k=>{const v=r.test[k];return `<tr><td>${v.name}</td><td class="num">${v.final} €</td><td class="num ${v.multiple>=1?'up':'down'}">${xfmt(v.multiple)}</td><td class="num">${v.sharpe}</td><td class="num down">${pct(v.maxdd)}</td></tr>`;};
   $("outP").innerHTML=`<table><thead><tr><th>Perfil</th><th class="num">100 € →</th><th class="num">Múltiplo</th><th class="num">Sharpe</th><th class="num">Max DD</th></tr></thead><tbody>${row("bench")}${row("agg")}${row("def")}</tbody></table>
   <div class="sub" style="margin-top:8px">7 activos · costes reales · rebalanceo mensual · ${r.to} · ${r.elapsed_ms} ms</div>`;}
@@ -311,8 +321,62 @@ function drawPulse(){const s=document.createElement("div").innerHTML;let d="M0 6
   document.getElementById("vpulse").innerHTML=`<svg viewBox="0 0 500 100" style="width:100%;height:100%"><line x1="0" y1="50" x2="500" y2="50" stroke="var(--grid)" stroke-dasharray="4 4"/><path d="${d}" fill="none" stroke="var(--blue)" stroke-width="2"/></svg>`;
   document.getElementById("vforce").textContent="Fuerza "+(64+Math.floor(Math.random()*15))+"%";}
 function drawEdge(){let h="";for(let i=0;i<24;i++){const v=Math.random()*60+8;h+=`<div class="${i>16?'neg':''}" style="height:${v}px"></div>`;}document.getElementById("vedge").innerHTML=h;}
-function initAlphaVisuals(){drawPins();drawMirofish();drawPulse();drawEdge();setInterval(dropBall,320);setInterval(()=>{drawMirofish();drawPulse();drawEdge();},4200);refreshBTC();}
+function initAlphaVisuals(){drawPins();drawMirofish();drawPulse();drawEdge();setInterval(dropBall,320);setInterval(()=>{drawMirofish();drawPulse();drawEdge();},4200);refreshBTC();buildConstellation();}
 async function refreshBTC(){try{const r=await (await fetch("api/live")).json();if(r.assets&&r.assets.BTC){document.getElementById("vbtc").textContent=r.assets.BTC.last_close.toLocaleString("es-ES",{maximumFractionDigits:2})+" $";}}catch(e){}}
+
+// ---------- constelacion 3D (three.js) ----------
+const AGENTS=[
+ {n:"Investigador",r:"contexto y datos",s:"analiza",c:0x2ea043},
+ {n:"Técnico",r:"momentum / régimen",s:"evalúa",c:0x0a84ff},
+ {n:"Predictor ML",r:"modelos históricos",s:"predice",c:0xbf5af2},
+ {n:"Noticias",r:"sentimiento",s:"lee",c:0xff9f0a},
+ {n:"Examinador (Juez)",r:"grilla y valida",s:"juzga",c:0x00d9d9},
+ {n:"Crítico",r:"abogado del diablo",s:"cuestiona",c:0xff453a},
+ {n:"Riesgo",r:"reglas deterministas",s:"aprueba/bloquea",c:0x30d158},
+ {n:"Ejecutor",r:"modo papel",s:"ordena",c:0x636366}];
+function buildConstellation(){
+  const box=document.getElementById("c3d");
+  if(!window.THREE||!box){document.getElementById("c3dinfo").textContent="3D no disponible (sin THREE)";return;}
+  const W=box.clientWidth||900,H=340;
+  const scene=new THREE.Scene();
+  const camera=new THREE.PerspectiveCamera(50,W/H,0.1,100);camera.position.set(0,2.4,7.4);camera.lookAt(0,0,0);
+  const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true});renderer.setSize(W,H);renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  box.appendChild(renderer.domElement);
+  const core=new THREE.Mesh(new THREE.SphereGeometry(0.42,40,40),new THREE.MeshStandardMaterial({color:0x111827,emissive:0x0071e3,emissiveIntensity:.55,metalness:.6,roughness:.25}));
+  scene.add(core);
+  scene.add(new THREE.AmbientLight(0xffffff,.75));scene.add(new THREE.PointLight(0xffffff,1,14));
+  const group=new THREE.Group();scene.add(group);
+  const meshes=AGENTS.map((a,i)=>{
+    const r=1.5+(i%4)*0.42, y=1.3-(i%3)*0.9, ang=(i/8)*Math.PI*2;
+    const m=new THREE.Mesh(new THREE.SphereGeometry((i%2?0.30:0.26),26,26),new THREE.MeshStandardMaterial({color:a.c,emissive:a.c,emissiveIntensity:.35,roughness:.3}));
+    m.userData=AGENTS[i];m.userData.r=r;m.userData.ang=ang;m.userData.y=y;m.userData.speed=0.5+((i*37)%10)/8;
+    group.add(m);return m;});
+  document.getElementById("c3dlegend").innerHTML=AGENTS.map(a=>`<span><b style="color:#${a.c.toString(16).padStart(6,'0')}">●</b> ${a.n}</span>`).join("");
+  const rc=new THREE.Raycaster(),ndc=new THREE.Vector2();
+  let dragging=false,lastX=0,az=0,auto=true;
+  renderer.domElement.style.cursor="grab";
+  renderer.domElement.addEventListener("pointerdown",e=>{dragging=true;lastX=e.clientX;auto=false;renderer.domElement.style.cursor="grabbing";});
+  window.addEventListener("pointerup",()=>{dragging=false;setTimeout(()=>auto=true,2600);});
+  renderer.domElement.addEventListener("pointermove",e=>{
+    if(dragging){az+=(e.clientX-lastX)*0.008;lastX=e.clientX;}
+    const rect=renderer.domElement.getBoundingClientRect();
+    ndc.x=((e.clientX-rect.left)/rect.width)*2-1;ndc.y=-((e.clientY-rect.top)/rect.height)*2+1;
+    rc.setFromCamera(ndc,camera);const hit=rc.intersectObjects(meshes);
+    if(hit.length){const a=hit[0].object.userData;document.getElementById("c3dinfo").innerHTML=`<b>${a.n}</b> · ${a.s}<br/><span>${a.r}</span>`;renderer.domElement.style.cursor="pointer";}
+    else if(!dragging){renderer.domElement.style.cursor="grab";}
+  });
+  window.addEventListener("resize",()=>{const w=document.getElementById("c3d").clientWidth||W;renderer.setSize(w,H);camera.aspect=w/H;camera.updateProjectionMatrix();});
+  let t=0;
+  (function loop(){requestAnimationFrame(loop);t+=0.01;az+=auto?0.0035:0;group.rotation.y=az;
+    meshes.forEach((m,i)=>{
+      m.position.x=Math.cos(m.userData.ang+t*m.userData.speed)*m.userData.r;
+      m.position.z=Math.sin(m.userData.ang+t*m.userData.speed)*m.userData.r;
+      m.position.y=m.userData.y+Math.sin(t*2+i)*0.05;
+      m.material.emissiveIntensity=0.3+0.5*Math.abs(Math.sin(t*1.6+i));
+      m.rotation.x+=0.01;m.rotation.y+=0.012;});
+    core.rotation.y+=0.01;core.rotation.x+=0.004;
+    renderer.render(scene,camera);})();
+}
 
 strat();live();initAlphaVisuals();
 </script>
