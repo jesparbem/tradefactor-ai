@@ -58,7 +58,22 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
 .agst .yes{background:var(--rise);color:var(--up);border-color:transparent}
 .agst .no{background:var(--fall);color:var(--down);border-color:transparent}
 .foot{color:var(--mut);font-size:.74rem;text-align:center;margin:16px 0 8px;line-height:1.6;border-top:1px solid var(--line);padding-top:12px}
+/* modulo visual Alpha (portado del mockup) */
+.avis{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-bottom:16px}
+.vcard{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:0 3px 12px rgba(0,0,0,.05)}
+.vcard h3{font-size:.72rem;color:var(--mut);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;display:flex;justify-content:space-between;align-items:baseline}
+.vstat{display:flex;gap:12px;flex-wrap:wrap;font-size:.74rem;color:var(--mut);margin:4px 0}
+.vstat b{color:var(--ink);font-variant-numeric:tabular-nums}
+.pins{position:relative;height:150px;overflow:hidden}
+.pins svg{width:100%;height:100%;display:block}
+.ball{position:absolute;width:8px;height:8px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#9fd6b2,#1f9d4d)}
+.graph{position:relative;height:150px}
+.graph svg{width:100%;height:100%;display:block}
+.pulse{height:110px;position:relative}.pulse svg{width:100%;height:100%}
+.edge{display:flex;align-items:flex-end;gap:2px;height:74px;margin-top:6px}
+.edge div{flex:1;border-radius:2px 2px 0 0;background:#6090d0}.edge div.neg{background:#b07060}
 @media(max-width:860px){.grid{grid-template-columns:1fr}}
+@media(max-width:860px){.avis{grid-template-columns:1fr}}
 </style></head><body>
 <div class="top"><div class="wrap">
   <div class="brand">Factor<span>IA</span> Terminal</div>
@@ -128,6 +143,20 @@ td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
   <div class="path">Alpha · escenarios de futuro + barrido</div>
   <h1>La red piensa el camino del dinero</h1>
   <div class="sub">Mirofish elige el escenario de mayor probabilidad · el barrido IA detecta oportunidades en la cadena de suministro · el veredicto reúne a los 8 agentes.</div>
+  <div class="avis">
+    <div class="vcard"><h3>Probability Lattice <span style="color:var(--blue)">en vivo</span></h3>
+      <div class="vstat"><span>8 compuertas</span><span>Bias <b>+6,5</b></span><span>Caídas <b id="vballs">0</b></span><span style="color:var(--up)" id="vacierto">Acierto —</span></div>
+      <div class="pins" id="vpins"></div></div>
+    <div class="vcard"><h3>Mirofish · grafo <span style="color:var(--up)">⚡ PREDICTED</span></h3>
+      <div class="vstat"><span>Nodos 50</span><span>Confianza <b id="vconf">—</b></span><span id="vpred">—</span></div>
+      <div class="graph" id="vgraph"><svg id="vgraphSvg"></svg></div></div>
+    <div class="vcard"><h3>Pulso del precio (BTC) <span id="vbtc" style="color:var(--blue)">—</span></h3>
+      <div class="pulse" id="vpulse"></div>
+      <div class="vstat"><span>Objetivo varía</span><span style="color:var(--up)" id="vforce">Fuerza —</span></div></div>
+    <div class="vcard"><h3>Edge Distribution 24H <span style="color:var(--mut)">ventaja</span></h3>
+      <div class="edge" id="vedge"></div>
+      <div class="vstat"><span style="color:var(--up)">Ventaja media +2,4%</span></div></div>
+  </div>
   <div class="grid">
     <div class="card"><h2>Mirofish · escenarios de futuro</h2>
       <button class="btn btn-g" onclick="mirofish()">🧠 Generar escenarios (100 €)</button>
@@ -262,6 +291,29 @@ async function rollt(){$("spR").classList.add("show");$("outR").innerHTML="";
   Perseguir el mejor momentum cada cierre con costes <b>pierde</b>. Elegido: ${picks}. Esto es lo que la plataforma te enseña a no hacer.</div>`;
   if(r.curve&&r.curve.length)drawSVG("R",[{label:"Rotación diaria",c:"agg",p:r.curve}],"2024 → hoy");}
 
-strat();live();
+// ---------- modulo visual Alpha (portado del mockup) ----------
+const gCatchers=Array(9).fill(0);
+function drawPins(){let h="";for(let r=0;r<6;r++){const y=12+r*20;for(let i=0;i<9;i++){h+=`<circle cx="${60+i*48}" cy="${y}" r="2.5" fill="var(--grid)"/>`;}}
+  h+=`<rect x="210" y="118" width="70" height="3" fill="var(--grid)"/>`;document.getElementById("vpins").innerHTML=`<svg viewBox="0 0 500 148" style="width:100%;height:100%">${h}</svg>`;}
+function dropBall(){let idx=4;for(let i=0;i<8;i++){idx+=Math.random()<0.56?0.5:-0.5;}idx=Math.max(0,Math.min(8,Math.round(idx)));
+  gCatchers[idx]++;const total=gCatchers.reduce((a,b)=>a+b,0);
+  const b=document.createElement("div");b.className="ball";b.style.left=(3+idx/8*92)+"%";b.style.top="0";document.getElementById("vpins").appendChild(b);
+  let y=0;const im=setInterval(()=>{y+=7;b.style.top=Math.min(y,128)+"px";if(y>=128)clearInterval(im);},13);
+  if(document.getElementById("vpins").children.length>220)document.getElementById("vpins").innerHTML="";
+  document.getElementById("vballs").textContent=total;
+  document.getElementById("vacierto").textContent="Acierto "+(gCatchers.slice(4).reduce((a,b)=>a+b,0)/total*100).toFixed(1)+"% (verde)";}
+function drawMirofish(){const s=document.getElementById("vgraphSvg"),cx=250,cy=72,R=48;let h="";const cols=["#2ea043","#e0442e","#0071e3"];
+  for(let i=0;i<50;i++){const a=i/50*Math.PI*2+Math.random()*.3,r=R+rnd(-15,15),t=Math.random()<.5?0:(Math.random()<.5?1:2);
+    h+=`<circle cx="${(cx+Math.cos(a)*r).toFixed(1)}" cy="${(cy+Math.sin(a)*r).toFixed(1)}" r="${rnd(2.5,5.5).toFixed(1)}" fill="${cols[t]}" opacity=".85"/>`;}
+  s.innerHTML=h;document.getElementById("vconf").textContent=(91+Math.random()*1.6).toFixed(1)+"%";
+  document.getElementById("vpred").textContent=Math.random()<0.75?"PREDICTED: UP":"NEUTRAL";}
+function drawPulse(){const s=document.createElement("div").innerHTML;let d="M0 64";for(let i=1;i<=60;i++){d+=` L${(i/60*480).toFixed(0)} ${(64-Math.sin(i/8)*12+rnd(-4,4)).toFixed(0)}`;}
+  document.getElementById("vpulse").innerHTML=`<svg viewBox="0 0 500 100" style="width:100%;height:100%"><line x1="0" y1="50" x2="500" y2="50" stroke="var(--grid)" stroke-dasharray="4 4"/><path d="${d}" fill="none" stroke="var(--blue)" stroke-width="2"/></svg>`;
+  document.getElementById("vforce").textContent="Fuerza "+(64+Math.floor(Math.random()*15))+"%";}
+function drawEdge(){let h="";for(let i=0;i<24;i++){const v=Math.random()*60+8;h+=`<div class="${i>16?'neg':''}" style="height:${v}px"></div>`;}document.getElementById("vedge").innerHTML=h;}
+function initAlphaVisuals(){drawPins();drawMirofish();drawPulse();drawEdge();setInterval(dropBall,320);setInterval(()=>{drawMirofish();drawPulse();drawEdge();},4200);refreshBTC();}
+async function refreshBTC(){try{const r=await (await fetch("api/live")).json();if(r.assets&&r.assets.BTC){document.getElementById("vbtc").textContent=r.assets.BTC.last_close.toLocaleString("es-ES",{maximumFractionDigits:2})+" $";}}catch(e){}}
+
+strat();live();initAlphaVisuals();
 </script>
 </body></html>
