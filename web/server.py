@@ -14,14 +14,15 @@ Endpoints (HTTP JSON, stdlib, sin dependencias externas):
   POST /api/refresh         -> actualizar datos desde Binance (asincrono, respuesta rapida)
   GET  /api/live            -> ultimo precio/cierre por activo + fecha de datos
 """
-import json, math, random, statistics, sys, time
+import json, math, os, random, statistics, sys, time
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from urllib.parse import urlparse, parse_qs
 sys.path.insert(0, "/root/trading-sim")   # para importar simcore y portsim (dir padre)
 import simcore as sim
 import portsim as psim
 
-HOST, PORT = "0.0.0.0", 8766
+PORT = int(os.environ.get("HERMES_SIM_PORT", "8766"))
+STATIC_FILE = os.environ.get("HERMES_SIM_STATIC", "/root/trading-sim/web/index.html")
 DATA = {}                     # sym -> {dates:[], prices:[], rows:[...]}
 SPLIT = {}                    # sym -> indice del split (anio >= 2024)
 
@@ -468,6 +469,28 @@ def ia_sweep():
     return res
 
 
+# ------------------------------------------------------------------ radar de convergencia (Binance 24h)
+def market_radar(top=12):
+    import urllib.request
+    try:
+        with urllib.request.urlopen("https://api.binance.com/api/v3/ticker/24hr", timeout=25) as r:
+            all_t = json.loads(r.read())
+    except Exception as e:
+        return {"error": f"Binance: {e}"}
+    mk = [t for t in all_t if t["symbol"].endswith("USDT") and float(t.get("quoteVolume") or 0) > 1_000_000]
+    def row(t):
+        return {"sym": t["symbol"].replace("USDT",""), "chg": round(float(t["priceChangePercent"]),2),
+                "last": round(float(t["lastPrice"]), 6), "qvol": round(float(t["quoteVolume"]))
+                if False else round(float(t.get("quoteVolume",0))/1e6,1)}
+    gainers = sorted(mk, key=lambda t: -float(t["priceChangePercent"]))[:top]
+    losers = sorted(mk, key=lambda t: float(t["priceChangePercent"]))[:top]
+    # salidas de USD (= oferta) y entradas (= demanda) aprox por volumen
+    most_active = sorted(mk, key=lambda t: -float(t.get("quoteVolume",0)))[:top]
+    return {"time": (lambda _: _)(None), "gainers": [row(t) for t in gainers],
+            "losers": [row(t) for t in losers], "most_active": [row(t) for t in most_active],
+            "count": len(mk)}
+
+
 # ------------------------------------------------------------------ cartera multi-activo
 PORT_UNIVERSE = ["BTC", "ETH", "NVDA", "SPY", "AAPL", "GC=F", "EURUSD=X"]
 
@@ -537,6 +560,9 @@ def handler_factory(static):
                 return
             if u.path == "/api/sweep":
                 json_resp(self, market_sweep())
+                return
+            if u.path == "/api/radar":
+                json_resp(self, market_radar())
                 return
             if u.path == "/" or u.path.startswith("/index"):
                 try:
@@ -629,9 +655,9 @@ def DATA_BYREF_VIEW(sym_default="BTC"):
 def main():
     ensure_data()
     print("Datos listos:", {k: len(v["prices"]) for k, v in DATA.items()})
-    static = "/root/trading-sim/web/index.html"
-    srv = ThreadingHTTPServer((HOST, PORT), handler_factory(static))
-    print(f"Simulador web en http://{HOST}:{PORT}")
+    static = STATIC_FILE
+    srv = ThreadingHTTPServer(("0.0.0.0", PORT), handler_factory(static))
+    print(f"Simulador web en http://0.0.0.0:{PORT} (static={static})")
     try:
         srv.serve_forever()
     except KeyboardInterrupt:
