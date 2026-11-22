@@ -45,16 +45,21 @@ def refresh_data():
 
 # ------------------------------------------------------------------ metricas
 def run_strategy(sym, strategy, params, capital, split_mode):
-    p = DATA[sym]["prices"]; d = DATA[sym]["dates"]
+    if sym in DATA:
+        p = DATA[sym]["prices"]; d = DATA[sym]["dates"]
+    else:
+        rows = psim.load_any(sym)
+        p = [r["c"] for r in rows]; d = [r["t"] for r in rows]
     if strategy == "buyandhold":
         positions = [1.0] * len(p)
     else:
         s = sim.STRATEGIES[strategy]
         positions = s["fn"](p, **params)
+    split = SPLIT[sym] if sym in SPLIT else next((i for i, x in enumerate(d) if x.year >= 2024), len(d))
     if split_mode == "train":
-        t0, t1 = 0, SPLIT[sym]
+        t0, t1 = 0, split
     elif split_mode == "test":
-        t0, t1 = SPLIT[sym], None
+        t0, t1 = split, None
     else:  # full
         t0, t1 = 0, None
     m = sim.metrics(p, positions, capital, t0=t0, t1=t1, dates=d)
@@ -306,7 +311,7 @@ def market_sweep():
 
 
 # ------------------------------------------------------------------ Mirofish: escenarios de futuro + eleccion + rotacion a cierre
-SCEN_UNIVERSE = {"Cripto": ["BTC", "ETH"], "Materias primas": ["GC=F", "CL=F", "SI=F"], "Acciones": ["NVDA", "SPY", "AAPL"]}
+SCEN_UNIVERSE = {"Cripto": ["BTC", "ETH"], "Materias primas": ["GC=F", "CL=F", "SI=F"], "Acciones": ["NVDA", "SPY", "AAPL"], "Naturgy": ["NTGY.MC"]}
 
 def _roll(sym, window=7, keep_days=750):
     """Retornos futuros rodantes (sin solapamiento solo al final) y percentiles."""
@@ -583,7 +588,9 @@ def handler_factory(static):
                     b = self._read_json()
                     sym = (b.get("asset") or "BTC").upper()
                     strat = b.get("strategy") or "momentum_regime"
-                    params = b.get("params") or sim.STRATEGIES[strat]["params"]
+                    params = b.get("params")
+                    if params is None:
+                        params = sim.STRATEGIES.get(strat, {}).get("params") or {}
                     cap = float(b.get("capital") or 100)
                     mode = b.get("split") or "test"
                     m, _pos = run_strategy(sym, strat, params, cap, mode)
