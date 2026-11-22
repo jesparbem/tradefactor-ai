@@ -237,6 +237,7 @@ tbody tr:nth-child(2){animation-delay:.05s}tbody tr:nth-child(3){animation-delay
     <button class="on" data-t="p">Portafolio<span class="kbd">1</span></button>
     <button data-t="s">Simulaciones<span class="kbd">2</span></button>
     <button data-t="a">Alpha<span class="kbd">3</span></button>
+    <button data-t="n">Naturgy<span class="kbd">4</span></button>
   </nav>
   <div class="spacer"></div>
   <div class="status" title="Reloj del terminal"><span class="dot"></span><span id="clock">--:--:--</span></div>
@@ -364,6 +365,41 @@ tbody tr:nth-child(2){animation-delay:.05s}tbody tr:nth-child(3){animation-delay
       <div class="spinner" id="spRad"></div><div id="outRad"></div>
       <div class="sub" style="margin-top:10px"><b>Traders influyentes (copiar perfil):</b></div>
       <div id="inf" style="margin-top:6px"></div></div>
+  </div>
+</section>
+
+<section class="screen" id="n">
+  <div class="path">Naturgy · Energía (NTGY.MC)</div>
+  <h1>Naturgy — hacia dónde vamos</h1>
+  <div class="sub">Simulaciones y <b>escenarios de futuro (Mirofish)</b> sobre la cotización real de Naturgy (NTGY.MC, Bolsa de Madrid). La columna que manda es la de fuera de muestra (2024→).</div>
+  <div class="banner" id="natTop">Cargando cotización de Naturgy…</div>
+  <div class="grid">
+    <div class="card">
+      <h2>Mirofish · escenarios de futuro de Naturgy</h2>
+      <button class="btn btn-g" onclick="natScen()">🧠 ¿Hacia dónde va Naturgy?</button>
+      <div class="spinner" id="spNatM"></div>
+      <div id="outNatM"></div>
+      <div style="height:150px;margin-top:8px;border:1px solid var(--line);border-radius:12px;overflow:hidden" id="nat3d"></div>
+    </div>
+    <div class="card">
+      <h2>Simular escenario Naturgy</h2>
+      <div class="row">
+        <div class="fld"><label>Estrategia</label>
+          <select id="natStrat"><option value="momentum_regime">Momentum + régimen</option><option value="ma_cross">Cruce de medias</option><option value="momentum_vol">Mom + vol</option><option value="buyandhold">Comprar &amp; mantener</option></select></div>
+        <div class="fld"><label>Periodo</label>
+          <select id="natSplit"><option value="test">Fuera de muestra (2024→)</option><option value="train">Entrenamiento</option><option value="full">Todo</option></select></div>
+        <button class="btn btn-p" onclick="natSim()">▶ Ejecutar</button>
+      </div>
+      <div class="spinner" id="spNatS"></div>
+      <div class="svgbox" id="svgNatS"></div>
+      <div id="outNatS"></div>
+    </div>
+  </div>
+  <div class="card wide" style="margin-top:14px">
+    <h2>Veredicto de la red sobre Naturgy</h2>
+    <button class="btn btn-g" onclick="natVerdict()">⚖️ Consultar a los agentes</button>
+    <div class="spinner" id="spNatV"></div>
+    <div id="outNatV"></div>
   </div>
 </section>
 
@@ -864,7 +900,51 @@ document.querySelectorAll(".spinner").forEach(sp=>{const btn=()=>sp.parentElemen
     r.render(sc,cam);})();
 })();
 
-strat();live();initAlphaVisuals();renderInf();
+// ---------- Seccion Naturgy ----------
+async function natVerdict(){$("spNatV").classList.add("show");$("outNatV").innerHTML="";
+  const r=await post("api/verdict",{asset:"NTGY.MC",capital:100});$("spNatV").classList.remove("show");
+  if(r.error){$("outNatV").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  const cls=r.verdict&&r.verdict.startsWith("ENTRAR")?"up":"down";
+  $("outNatV").innerHTML=`<div class="banner">⚖️ <b>Naturgy</b> a ${r.price} € · Veredicto <b class="${cls}">${r.verdict}</b> · a favor ${r.yes} / en contra ${r.no}
+  <br/>Entrar ${r.entry} · objetivo ${r.target} · stop ${r.stop}</div>
+  <div class="agst">`+r.agents.map(a=>`<span class="ag ${a.voto===1?'yes':(a.voto===-1?'no':'')}"><b>${a.icon} ${a.nombre}</b>: ${a.stancia}</span>`).join("")+`</div>
+  <div class="sub" style="margin-top:8px">`+r.agents.map(a=>`<b>${a.icon} ${a.nombre}</b> — ${a.razon}<br/>`).join("")+`</div>`;}
+async function natSim(){$("spNatS").classList.add("show");$("outNatS").innerHTML="";
+  const r=await post("api/simulate",{asset:"NTGY.MC",capital:100,split:$("natSplit").value,strategy:$("natStrat").value,params:{}});
+  $("spNatS").classList.remove("show");
+  if(r.error){$("outNatS").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  drawSVG("NatS",[{label:"Naturgy · "+($("natStrat").value==="buyandhold"?"Buy&Hold":r.strategy),c:"bench",p:r.sim.curve}],"Naturgy · "+$("natSplit").value);
+  $("outNatS").innerHTML=(typeof metricsHTML==="function")?metricsHTML(r.sim):"";}
+async function natScen(){$("spNatM").classList.add("show");$("outNatM").innerHTML="";
+  const r=await post("api/scenarios",{capital:100});$("spNatM").classList.remove("show");
+  if(r.error){$("outNatM").innerHTML=`<div class="banner">❌ ${r.error}</div>`;return;}
+  const g=(r.groups["Naturgy"]||[]);
+  if(!g.length){$("outNatM").innerHTML=`<div class="banner">Naturgy sin datos de escenario.</div>`;return;}
+  const a=g[0],entry=a.price,t=entry*(1+a.p75),c=entry*(1+a.p50),st=entry*(1-a.p25);
+  const chosen={asset:"NTGY.MC",market:"Naturgy",price:entry,target:t,central:c,stop:st,prob_up:a.prob_up,scenarios_7d:[
+    {nombre:"Alcista",prob:a.prob_up,ruta:a.p75,"100e":100*(1+a.p75)},
+    {nombre:"Base",prob:.5,ruta:a.p50,"100e":100*(1+a.p50)},
+    {nombre:"Bajista",prob:1-a.prob_up,ruta:a.p25,"100e":100*(1+a.p25)}]};
+  $("outNatM").innerHTML=`<div class="banner">🎯 <b>Naturgy ${entry} €</b> · prob↑ ${(a.prob_up*100).toFixed(0)}%
+  <br/>Objetivo <b>${t.toFixed(2)}</b> · Central ${c.toFixed(2)} · Soporte <b>${st.toFixed(2)}</b> · 100 € esperado a 7d ≈ <b>${(100*(1+a.p50)).toFixed(2)} €</b></div>
+  <table><thead><tr><th>Escenario</th><th class="num">Prob</th><th class="num">Ruta 7d</th><th class="num">100 €</th></tr></thead><tbody>`+
+  chosen.scenarios_7d.map(x=>`<tr><td>${x.nombre}</td><td class="num">${(x.prob*100).toFixed(0)}%</td><td class="num ${x.ruta>=0?'up':'down'}">${(x.ruta*100).toFixed(1)}%</td><td class="num">${x["100e"].toFixed(2)} €</td></tr>`).join("")+`</tbody></table>`;
+  // render 3D en #nat3d
+  if(window.THREE){nat3dDraw(chosen);}}
+function nat3dDraw(c){const box=document.getElementById("nat3d");if(!box||!window.THREE||!c)return;
+  const W=(box.clientWidth||420),H=150;const scene=new THREE.Scene(),cam=new THREE.PerspectiveCamera(40,W/H,.1,100);cam.position.set(0,1.4,4.2);cam.lookAt(0,-.3,0);
+  const ren=new THREE.WebGLRenderer({alpha:true,antialias:true});ren.setSize(W,H);ren.setPixelRatio(Math.min(window.devicePixelRatio,2));box.innerHTML="";box.appendChild(ren.domElement);
+  scene.add(new THREE.AmbientLight(0xffffff,.8));scene.add(new THREE.PointLight(0xffffff,1,10));
+  const core=new THREE.Mesh(new THREE.SphereGeometry(.06,16,16),new THREE.MeshBasicMaterial({color:0x0a66ff}));core.position.set(0,-.6,0);scene.add(core);
+  const mk=(pts,col)=>{const cs=new THREE.CatmullRomCurve3(pts.map(p=>new THREE.Vector3(p[0],p[1],p[2])));return new THREE.Line(new THREE.BufferGeometry().setFromPoints(cs.getPoints(20)),new THREE.MeshBasicMaterial({color:col}));};
+  const up=[[0,-.6,0],[.7,-.1,.4],[1.4,.5,.8],[2.0,1.2,1.1]],base=[[0,-.6,0],[.6,-.15,0],[1.2,.2,.2],[1.7,.6,.4]],dn=[[0,-.6,0],[-.6,-.1,.2],[-1.1,-.4,-.2],[-1.6,-.9,-.5]];
+  [["#30d158",up],["#0a84ff",base],["#ff453a",dn]].forEach(([col,p])=>scene.add(mk(p,col)));
+  let t=0;(function l(){requestAnimationFrame(l);t+=.01;scene.rotation.y=Math.sin(t*.6)*.35;ren.render(scene,cam);})();}
+async function initNat(){try{const r=await post("api/verdict",{asset:"NTGY.MC",capital:100});
+  if(!r.error){$("natTop").innerHTML=`🇪🇸 <b>Naturgy (NTGY.MC)</b> a <b>${r.price} €</b> · veredicto de la red: <b>${r.verdict}</b> · a favor ${r.yes}/${r.no}.`;}
+  else $("natTop").innerHTML="🇪🇸 Naturgy (NTGY.MC) — pulsa un botón para calcular.";}catch(e){$("natTop").innerHTML="🇪🇸 Naturgy (NTGY.MC).";}}
+
+strat();live();initAlphaVisuals();renderInf();initNat();
 feedAdd("sim","terminal iniciado · 8 agentes en línea");setTimeout(simTick,1200);
 </script>
 </body></html>
